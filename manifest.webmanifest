@@ -1,0 +1,22 @@
+{
+  "name": "CPPG 스터디 — 개인정보 보호법",
+  "short_name": "CPPG",
+  "description": "개인정보관리사(CPPG) 시험 준비: 법 관계도, 연습문제, 암기노트",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f6f5f2",
+  "theme_color": "#2f4b8f",
+  "lang": "ko",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "연습문제", "url": "/quiz", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "암기노트", "url": "/memo", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "법 관계도", "url": "/map", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

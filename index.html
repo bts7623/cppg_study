@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f4b8f" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161922" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CPPG">
+<meta name="description" content="CPPG 개인정보관리사 시험 공부: 개인정보 보호법 관계도, 연습문제, 암기노트">
+<title>CPPG 스터디</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#f6f5f2;--paper:#fff;--fg:#1f2430;--muted:#5e6676;--line:#dcd9d2;--accent:#2f4b8f;--accent-soft:#e6ebf7;--c1:#6b5bd2;--c2:#2f8a4c;--c3:#b7791f;
+ --font-display:"Gowun Batang","Noto Serif KR",serif;--font-body:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+ padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme: dark){:root{--bg:#161922;--paper:#1f2330;--fg:#e8e9ee;--muted:#a3a9b8;--line:#333948;--accent:#8ea4e6;--accent-soft:#273252;--c1:#9d8ff0;--c2:#6ec68a;--c3:#e2b35b;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:1.55;min-height:100vh}
+.wrap{max-width:720px;margin:0 auto;padding-block:36px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kicker{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+h1{font-family:var(--font-display);font-size:clamp(28px,6vw,40px);margin:4px 0 6px}
+.lead{color:var(--muted);margin:0 0 24px;font-size:15px}
+.cards{display:grid;gap:12px}
+.card{display:block;text-decoration:none;color:var(--fg);background:var(--paper);border:1px solid var(--line);border-left:6px solid var(--cc);border-radius:12px;padding:16px 18px}
+.card:hover,.card:focus-visible{border-color:var(--cc);outline:none;box-shadow:0 0 0 2px color-mix(in srgb,var(--cc) 30%,transparent)}
+.card h2{font-family:var(--font-display);margin:0 0 4px;font-size:20px;color:var(--cc)}
+.card p{margin:0;color:var(--muted);font-size:14px}
+.card .n{float:right;font-size:12px;color:var(--muted)}
+.exam{margin-top:28px;background:var(--accent-soft);border-radius:12px;padding:14px 16px;font-size:14px}
+.exam b{color:var(--accent)}
+.install{display:none;margin-top:16px;background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:12px 14px;font-size:14px;align-items:center;gap:10px;flex-wrap:wrap}
+.install.on{display:flex}
+.install button{font:inherit;background:var(--accent);color:#fff;border:0;border-radius:6px;padding:7px 12px;cursor:pointer}
+.ios{font-size:13px;color:var(--muted);margin-top:14px}
+footer{margin-top:40px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">개인정보관리사 시험 준비</div>
+  <h1>CPPG 스터디</h1>
+  <p class="lead">개인정보 보호법 2026.9.11 시행본 기준. 한 번 열어두면 오프라인에서도 열림.</p>
+
+  <div class="cards">
+    <a class="card" href="/map" style="--cc:var(--c1)"><span class="n">조문 지도 · 관계망 · 시험 흐름</span><h2>법 관계도</h2><p>장별 색 구분, 조문 클릭 요지·시행령·출제 포인트, 법 ↔ 관련법 연결</p></a>
+    <a class="card" href="/quiz" style="--cc:var(--c2)"><span class="n">63문항 · 5과목 × 5유형</span><h2>연습문제</h2><p>보기 선택 → 답변 확인 → 해설. 오답 저장 후 다시 풀기, 과목별 과락 체크</p></a>
+    <a class="card" href="/memo" style="--cc:var(--c3)"><span class="n">숫자 · 절차 · 초성 · 비교 · 빈칸</span><h2>암기노트</h2><p>빈칸 클릭 열기, 연상 암기법, 외웠음 체크 저장</p></a>
+  </div>
+
+  <div class="install" id="install"><span>홈 화면에 앱으로 설치하면 전체 화면으로 열림.</span><button id="installBtn">설치</button></div>
+  <p class="ios" id="ios" hidden>iPhone: Safari 공유 버튼 → “홈 화면에 추가”로 설치.</p>
+
+  <div class="exam"><b>시험 구성</b> · 100문항 객관식 120분 · 평균 60점 이상 + 과목별 40% 이상 · 4과목(보호조치) 30%, 3과목(라이프사이클) 25%, 2과목 20%, 5과목 15%, 1과목 10%</div>
+  <footer>법률 제21445호(2026.3.10 개정) · 시행령 2026.9.10 개정 · 정보통신망법 2026.10.2 시행본 참고</footer>
+</div>
+<script>
+let deferred=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;document.getElementById('install').classList.add('on');});
+document.getElementById('installBtn').onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;document.getElementById('install').classList.remove('on');};
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent),standalone=('standalone' in navigator&&navigator.standalone)||matchMedia('(display-mode: standalone)').matches;
+if(isIOS&&!standalone)document.getElementById('ios').hidden=false;
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>

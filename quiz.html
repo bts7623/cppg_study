@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f4b8f" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161922" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CPPG">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>CPPG 연습문제</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 왼쪽 설정 패널(과목·유형·문항수) + 오른쪽 시험지. 좁은 화면에선 위아래로 쌓임 */
+:root{
+  --bg:#f6f5f2; --paper:#fff; --fg:#1f2430; --muted:#5e6676; --line:#dcd9d2; --accent:#2f4b8f; --accent-soft:#e6ebf7;
+  --ok:#2f8a4c; --ok-soft:#e3f3e8; --bad:#c0553d; --bad-soft:#fbe7e2; --warn:#b7791f;
+  --s1:#6b5bd2; --s2:#2a7f8e; --s3:#2f8a4c; --s4:#b7791f; --s5:#8b3a62;
+  --font-display:"Gowun Batang","Noto Serif KR",serif; --font-body:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161922;--paper:#1f2330;--fg:#e8e9ee;--muted:#a3a9b8;--line:#333948;--accent:#8ea4e6;--accent-soft:#273252;--ok:#6ec68a;--ok-soft:#1f3a2a;--bad:#ea8a73;--bad-soft:#42261f;--warn:#e2b35b;--s1:#9d8ff0;--s2:#5fc2d2;--s3:#6ec68a;--s4:#e2b35b;--s5:#d27aa6;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#161922;--paper:#1f2330;--fg:#e8e9ee;--muted:#a3a9b8;--line:#333948;--accent:#8ea4e6;--accent-soft:#273252;--ok:#6ec68a;--ok-soft:#1f3a2a;--bad:#ea8a73;--bad-soft:#42261f;--warn:#e2b35b;--s1:#9d8ff0;--s2:#5fc2d2;--s3:#6ec68a;--s4:#e2b35b;--s5:#d27aa6;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.55}
+.wrap{max-width:1100px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kicker{font-size:12px;letter-spacing:.08em;color:var(--accent);font-weight:600;text-transform:uppercase}
+h1{font-family:var(--font-display);font-size:clamp(24px,4vw,34px);margin:0 0 4px}
+.lead{color:var(--muted);margin:0 0 16px;font-size:14px}
+.cols{display:grid;grid-template-columns:280px 1fr;gap:18px;align-items:start}
+@media (max-width:760px){.cols{grid-template-columns:1fr}}
+.side{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;position:sticky;top:env(safe-area-inset-top,0px)}
+@media (max-width:760px){.side{position:static}}
+.side h3{font-size:12px;letter-spacing:.06em;color:var(--muted);margin:12px 0 6px;text-transform:uppercase}
+.side h3:first-child{margin-top:0}
+.chk{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:14px;cursor:pointer}
+.chk input{accent-color:var(--accent)}
+.chk .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.btn{font:inherit;background:var(--paper);border:1px solid var(--line);color:var(--fg);padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:500}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible,.opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+select,input[type=number]{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--fg);width:100%}
+.stack{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.main{min-width:0}
+.status{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px;font-size:13px;color:var(--muted)}
+.status b{color:var(--fg);font-variant-numeric:tabular-nums}
+.bar{height:6px;background:var(--line);border-radius:3px;flex:1;min-width:120px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px 20px;margin-bottom:14px;border-top:5px solid var(--sc)}
+.card .top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;font-size:12px}
+.pill{padding:2px 8px;border-radius:999px;font-weight:600;background:var(--accent-soft);color:var(--accent)}
+.pill.s{background:color-mix(in srgb,var(--sc) 18%,transparent);color:var(--sc)}
+.qno{font-family:var(--font-display);font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums}
+.stem{font-size:16px;font-weight:600;margin:0 0 12px;line-height:1.5;text-wrap:pretty}
+.stem .box{display:block;background:var(--bg);border-left:3px solid var(--sc);padding:8px 10px;margin:8px 0;font-weight:400;font-size:14px}
+.opts{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;font:inherit;font-size:14.5px;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;color:var(--fg);width:100%;line-height:1.45}
+.opt .k{font-weight:700;color:var(--muted);flex:0 0 18px;font-variant-numeric:tabular-nums}
+.opt:hover{border-color:var(--accent)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt:disabled{cursor:default}
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.verdict{font-weight:700}
+.verdict.ok{color:var(--ok)}.verdict.bad{color:var(--bad)}
+.exp{display:none;margin-top:12px;background:var(--bg);border-radius:8px;padding:12px 14px;font-size:14px}
+.exp.on{display:block}
+.exp h4{margin:0 0 6px;font-size:12px;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+.exp .law{font-size:12.5px;color:var(--muted);margin-top:8px}
+.exp ul{margin:4px 0 0;padding-left:18px}
+.exp .why{margin:6px 0}
+.result{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px;text-align:center}
+.result .big{font-family:var(--font-display);font-size:48px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.result table{margin:14px auto 0;border-collapse:collapse;font-size:13px}
+.result td,.result th{border:1px solid var(--line);padding:5px 10px}
+.result th{background:var(--bg)}
+.types{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:12px 0 18px}
+.types div{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:13px}
+.types b{display:block;margin-bottom:2px}
+.empty{color:var(--muted);padding:30px;text-align:center}
+details{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:16px}
+summary{cursor:pointer;font-weight:600}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav class="appnav" aria-label="앱 메뉴">
+  <a href="/" class="brand">CPPG</a>
+  <a href="/map" data-p="map">관계도</a>
+  <a href="/quiz" data-p="quiz">연습문제</a>
+  <a href="/memo" data-p="memo">암기노트</a>
+</nav>
+<style>
+.appnav{position:sticky;top:0;z-index:40;display:flex;gap:4px;align-items:center;background:var(--paper);border-bottom:1px solid var(--line);padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:calc(8px + env(safe-area-inset-top,0px));font-family:var(--font-body);font-size:14px;overflow-x:auto}
+.appnav a{color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:999px;white-space:nowrap}
+.appnav a.on{background:var(--accent);color:#fff}
+.appnav .brand{font-family:var(--font-display);font-weight:700;color:var(--accent);font-size:16px;margin-right:auto}
+</style>
+<script>(function(){var p=location.pathname.replace(/^\/|\.html$/g,'')||'index';document.querySelectorAll('.appnav a[data-p]').forEach(function(a){if(a.dataset.p===p)a.classList.add('on');});})();</script>
+<div class="wrap">
+<div class="kicker">CPPG 개인정보관리사 · 출제유형별 연습</div>
+<h1>CPPG 연습문제</h1>
+<p class="lead">개인정보 보호법(2026.9.11 시행)·시행령·고시 기준. 과목과 유형을 고르고 시작 → 보기 선택 → <b>답변 확인</b>으로 정답·해설 확인. 틀린 문제는 자동 저장되어 “오답만 다시 풀기”로 복습.</p>
+
+<details>
+  <summary>CPPG 출제 유형 안내 (실제 시험은 이렇게 나옴)</summary>
+  <div class="types">
+    <div><b>① 옳은 것 / 옳지 않은 것</b>조문 4개를 보기로 늘어놓고 하나만 틀리게 비틂. 숫자·주체(보호위원회↔중앙행정기관)·‘할 수 있다↔하여야 한다’를 바꿈.</div>
+    <div><b>② 숫자·기준 암기</b>72시간, 10일, 5만/50만/100만, 3%·10%, 3년, 9명 등. 시행령 숫자를 묻는 문제가 가장 많음.</div>
+    <div><b>③ 사례형(상황 판단)</b>“A사가 ~했다. 적법한가 / 어떤 조문 근거인가 / 제3자 제공인가 위탁인가” 식의 판단.</div>
+    <div><b>④ 목록 완성·빈칸</b>동의 시 고지사항, 민감정보 범위, 처리방침 기재사항, 통지 사항 중 ‘포함되지 않는 것’.</div>
+    <div><b>⑤ 비교·구별</b>민감 vs 고유식별, 제공 vs 위탁, 가명 vs 익명, CPO vs CISO, 과징금 vs 과태료, 보호위 vs 분쟁조정위.</div>
+    <div><b>합격 기준</b>100문항 객관식 120분. 평균 60점 이상 + 과목별 40% 이상(과락). 4과목(보호조치)이 30%로 가장 큼.</div>
+  </div>
+</details>
+
+<div class="cols">
+  <aside class="side">
+    <h3>과목</h3>
+    <div id="subjects"></div>
+    <h3>유형</h3>
+    <div id="types"></div>
+    <h3>문항 수</h3>
+    <select id="count"><option value="10">10문항</option><option value="20" selected>20문항</option><option value="30">30문항</option><option value="999">선택 범위 전체</option></select>
+    <div class="stack">
+      <button class="btn primary" id="start">새로 시작 (무작위)</button>
+      <button class="btn" id="retry">오답만 다시 풀기 <span id="wrongCnt"></span></button>
+      <button class="btn" id="finish">채점·결과 보기</button>
+    </div>
+    <h3>문제 은행</h3>
+    <div style="font-size:13px;color:var(--muted)" id="bankInfo"></div>
+  </aside>
+  <main class="main">
+    <div class="status"><span>진행 <b id="prog">0 / 0</b></span><div class="bar"><i id="barfill"></i></div><span>정답 <b id="score">0</b></span></div>
+    <div id="paper"><div class="empty">왼쪽에서 과목·유형을 고르고 “새로 시작”을 누르면 문제가 나옴.</div></div>
+  </main>
+</div>
+</div>
+
+<script>
+const SUBJ={1:"1과목 보호의 이해",2:"2과목 보호 제도",3:"3과목 라이프사이클",4:"4과목 보호조치",5:"5과목 관리체계"};
+const TYPES={ox:"옳은/옳지 않은 것",num:"숫자·기준",case:"사례형",list:"목록·빈칸",cmp:"비교·구별"};
+// q:지문, o:보기4, a:정답 index(0~3), e:해설, l:근거 조문, s:과목, t:유형, box:지문 속 사례박스
+const BANK=[
+// ===== 1과목 =====
+{s:1,t:"ox",q:"개인정보 보호법상 ‘개인정보’의 정의에 관한 설명으로 옳지 않은 것은?",o:["살아 있는 개인에 관한 정보여야 하므로 사망한 사람의 정보는 원칙적으로 개인정보가 아니다.","해당 정보만으로 특정 개인을 알아볼 수 없더라도 다른 정보와 쉽게 결합하여 알아볼 수 있으면 개인정보이다.","‘쉽게 결합할 수 있는지’는 다른 정보의 입수 가능성 등 시간·비용·기술을 합리적으로 고려한다.","가명처리하여 추가 정보 없이는 알아볼 수 없게 한 정보(가명정보)는 개인정보에 해당하지 않는다."],a:3,e:"§2 1호 다목에 따라 가명정보는 개인정보의 한 유형이다. 법 적용에서 제외되는 것은 §58의2의 ‘익명정보’다.",l:"§2 1호, §58의2"},
+{s:1,t:"list",q:"개인정보 보호법 제3조의 개인정보 보호 원칙에 해당하지 않는 것은?",o:["처리 목적에 필요한 범위에서 최소한의 개인정보만을 적법하고 정당하게 수집","개인정보의 정확성·완전성·최신성 보장","익명처리가 가능한 경우에는 익명으로, 익명으로 목적 달성이 불가능하면 가명으로 처리","정보주체의 동의를 받은 경우에도 반드시 가명처리하여 보관"],a:3,e:"§3⑦은 ‘가능하면 익명, 안 되면 가명’이라는 우선순위 원칙이다. 동의받은 정보를 무조건 가명처리하라는 규정은 없다.",l:"§3"},
+{s:1,t:"cmp",q:"OECD 프라이버시 8원칙과 개인정보 보호법 제3조의 대응으로 가장 적절하지 않은 것은?",o:["수집제한의 원칙 ↔ §3① 최소 수집","정보 정확성의 원칙 ↔ §3③ 정확성·완전성·최신성","공개의 원칙 ↔ §3⑤ 처리방침 등 공개","책임의 원칙 ↔ §3⑥ 사생활 침해 최소화"],a:3,e:"책임의 원칙은 §3⑧(책임과 의무 준수로 신뢰 확보)에 대응한다. ⑥은 사생활 침해 최소화 처리 방법에 관한 것이다.",l:"§3, OECD 8원칙"},
+{s:1,t:"list",q:"제4조 정보주체의 권리에 포함되지 않는 것은?",o:["개인정보의 처리에 관한 정보를 제공받을 권리","개인정보의 열람(사본 발급 포함) 및 전송을 요구할 권리","완전히 자동화된 개인정보 처리에 따른 결정을 거부하거나 설명을 요구할 권리","개인정보처리자의 영업비밀을 열람할 권리"],a:3,e:"§4는 6가지 권리(정보 제공받을 권리, 동의 선택·결정권, 확인·열람·전송 요구권, 처리정지·정정·삭제·파기 요구권, 피해구제권, 자동화 결정 거부·설명 요구권)를 규정한다.",l:"§4"},
+{s:1,t:"ox",q:"개인정보 보호법 제6조(다른 법률과의 관계)에 관한 설명으로 옳은 것은?",o:["개인정보 보호법은 다른 법률에 우선하여 적용되는 특별법이다.","개인정보의 처리 및 보호에 관하여 다른 법률에 특별한 규정이 있는 경우를 제외하고는 이 법에 따른다.","정보통신서비스 제공자의 개인정보 처리에는 정보통신망법이 우선 적용된다.","다른 법률을 제·개정할 때 이 법의 목적과 원칙을 고려할 필요는 없다."],a:1,e:"개보법은 개인정보 보호의 일반법이다. 신용정보법 등 특별법이 있으면 그 법이 우선한다. 정보통신망법의 개인정보 특례 조항은 2020년 개보법으로 통합되었고, §6②(2023 신설)는 다른 법률 제·개정 시 이 법의 목적·원칙에 맞도록 규정한다.",l:"§6"},
+{s:1,t:"ox",q:"개인정보처리자에 관한 설명으로 옳지 않은 것은?",o:["업무를 목적으로 개인정보파일을 운용하기 위하여 개인정보를 처리하는 자이다.","스스로 처리하지 않고 다른 사람을 통하여 처리하는 경우에도 개인정보처리자가 된다.","공공기관, 법인, 단체뿐 아니라 개인도 개인정보처리자가 될 수 있다.","개인정보파일을 운용하지 않더라도 개인정보를 한 건이라도 취급하면 개인정보처리자이다."],a:3,e:"§2 5호의 요건은 ‘업무 목적 + 개인정보파일 운용’이다. 파일 운용 없이 우연히 개인정보를 접하는 것만으로는 처리자가 아니다.",l:"§2 5호"},
+// ===== 2과목 =====
+{s:2,t:"num",q:"개인정보 보호위원회의 구성과 운영에 관한 설명으로 옳은 것은?",o:["대통령 소속으로 두며, 위원은 7명이다.","상임위원 2명을 포함한 9명으로 구성하고 위원의 임기는 3년, 한 차례 연임할 수 있다.","회의는 재적위원 3분의 2 출석과 출석위원 과반수 찬성으로 의결한다.","소위원회는 5명으로 구성하며 과반수 찬성으로 의결한다."],a:1,e:"보호위원회는 국무총리 소속(§7), 9명 구성(§7의2), 임기 3년·1차 연임(§7의4), 재적 과반 출석·출석 과반 찬성(§7의10), 소위원회 3명·전원 찬성(§7의12).",l:"§7~§7의12"},
+{s:2,t:"num",q:"개인정보 보호 기본계획과 시행계획에 관한 설명으로 옳은 것은?",o:["기본계획은 보호위원회가 5년마다 수립한다.","시행계획은 보호위원회가 매년 수립하여 중앙행정기관에 통보한다.","기본계획은 3년마다 보호위원회가 관계 중앙행정기관의 장과 협의하여 수립하고, 시행계획은 중앙행정기관의 장이 매년 작성하여 보호위원회에 제출한다.","국회·법원·헌법재판소는 기본계획을 수립할 수 없다."],a:2,e:"§9 기본계획 3년, §10 시행계획 매년(중앙행정기관의 장 작성 → 보호위원회 심의·의결). 국회·법원·헌재·선관위는 자체 기본계획을 수립·시행할 수 있다(§9③).",l:"§9, §10"},
+{s:2,t:"num",q:"개인정보 분쟁조정위원회에 관한 설명으로 옳지 않은 것은?",o:["위원장 1명을 포함한 30명 이내의 위원으로 구성한다.","분쟁조정 신청을 받은 날부터 60일 이내에 심사하여 조정안을 작성해야 한다(연장 가능).","조정안을 제시받은 당사자가 15일 이내에 수락 여부를 알리지 않으면 조정을 거부한 것으로 본다.","조정의 내용은 재판상 화해와 동일한 효력을 갖는다."],a:2,e:"§47③: 15일 이내에 수락 여부를 알리지 않으면 조정안을 ‘수락한 것으로 본다’. 보기 1·2·4는 §40·§44·§47⑤의 내용.",l:"§40, §44, §47"},
+{s:2,t:"num",q:"집단분쟁조정에 관한 설명으로 옳은 것은?",o:["집단분쟁조정 절차 개시 시 7일 이상 공고한다.","시행령상 피해 정보주체가 50명 이상이고 사건의 중요한 쟁점이 공통되어야 한다.","개인정보처리자만 의뢰·신청할 수 있다.","집단분쟁조정은 조정 결과를 반드시 수락해야 한다."],a:1,e:"§49: 국가·지자체·소비자단체·사업자가 의뢰·신청, 14일 이상 공고, 60일 내 조정. 시행령 §52 요건: 정보주체 50명 이상 + 쟁점 공통.",l:"§49, 시행령 §52"},
+{s:2,t:"ox",q:"개인정보 단체소송에 관한 설명으로 옳은 것은?",o:["정보주체의 손해배상을 집단적으로 청구하는 소송이다.","개인정보처리자가 집단분쟁조정을 거부하거나 조정 결과를 수락하지 않은 경우에 권리침해 행위의 금지·중지를 구하는 소송이다.","비영리민간단체는 정보주체 10명 이상의 요청이 있으면 제기할 수 있다.","법원의 허가 없이 바로 제기할 수 있다."],a:1,e:"§51: 집단분쟁조정 거부·불수락 후 ‘금지·중지’ 청구. 소비자단체(정회원 1천명 이상·등록 3년) 또는 비영리민간단체(정보주체 100명 이상 요청·3년 활동·구성원 5천명). 법원 허가 필요(§55).",l:"§51~§57"},
+{s:2,t:"num",q:"2026년 개정 개인정보 보호법 제64조의2에 따른 과징금에 관한 설명으로 옳지 않은 것은?",o:["위반행위에 대해 전체 매출액의 100분의 3을 초과하지 않는 범위에서 과징금을 부과할 수 있다.","고의 또는 중대한 과실로 정보주체 피해 규모가 1천만명 이상인 경우 전체 매출액의 100분의 10까지 부과할 수 있다.","개인정보 보호를 위하여 예산·인력·설비 등을 투자한 경우 고의·중과실이 아니면 과징금을 감경한다.","매출액이 없거나 산정이 곤란한 경우 일반 위반은 50억원, 가중 사유는 100억원 이하에서 부과한다."],a:3,e:"매출액 없음·산정 곤란 시 일반(①)은 20억원 이하, 가중(②)은 50억원 이하. 나머지는 2026.3.10 개정 내용이 맞다.",l:"§64의2 ①②⑥"},
+{s:2,t:"cmp",q:"과징금과 과태료의 구별에 관한 설명으로 옳은 것은?",o:["과징금은 수사기관이, 과태료는 보호위원회가 부과한다.","과태료의 최고 금액은 5천만원이고 그 대상은 목욕실 등 금지 장소에 영상정보처리기기를 설치·운영하거나 촬영한 경우이다.","제29조 안전조치 의무 위반은 2년 이하 징역의 형벌 대상이다.","동일한 행위에 대해 과징금을 부과받은 경우 과태료는 반드시 함께 부과된다."],a:1,e:"§75①: 5천만원 과태료 2가지는 금지 장소 고정형 설치·운영, 이동형 촬영. §29 위반은 2023 개정으로 형벌이 삭제되고 과태료(3천만원)·과징금(유출 시)으로 전환. 과징금 부과 시 과태료는 감경·미부과 가능.",l:"§75, §64의2, §73"},
+{s:2,t:"ox",q:"다음 중 벌칙의 수준이 다른 하나는?",o:["정보주체의 동의 없이 개인정보를 제3자에게 제공한 자","법정대리인의 동의 없이 만 14세 미만 아동의 개인정보를 처리한 자","고정형 영상정보처리기기의 녹음기능을 사용한 자","업무상 알게 된 개인정보를 권한 없이 다른 사람에게 제공한 자"],a:2,e:"보기 1·2·4는 §71(5년/5천만원). 영상정보처리기기 임의 조작·녹음기능 사용은 §72(3년/3천만원).",l:"§71, §72"},
+{s:2,t:"case",q:"다음 사례에서 보호위원회가 취할 수 있는 조치로 가장 적절한 것은?",box:"A공단(지방공사)은 위험성이 높은 개인정보처리시스템을 운영하고 있다. 보호위원회는 법 위반 신고는 없었으나 취약점을 사전에 점검할 필요가 있다고 판단하여 보호실태를 점검하였고, 접속기록 미보관 사실을 발견하였다.",o:["즉시 형사 고발만 가능하다.","시정방안을 정하여 따르도록 권고하고, A공단은 통보받은 날부터 10일 이내에 수락 여부를 알려야 한다.","중앙행정기관이므로 시정조치 명령이 아닌 권고만 가능하다.","사전 실태점검은 법적 근거가 없으므로 아무 조치도 할 수 없다."],a:1,e:"§63의2 사전 실태점검(2023 신설): 위반 발견 시 시정권고 → 10일 내 수락 여부 통지 → 수락 시 시정조치 명령을 받은 것으로 간주, 불수락·불이행 시 검사. 지방공사는 §64① 시정조치 제외 기관(중앙행정기관·지자체·국회·법원·헌재·선관위)이 아니다.",l:"§63의2, §64"},
+{s:2,t:"cmp",q:"개인정보 보호법과 정보통신망법의 관계에 관한 설명으로 옳은 것은?",o:["정보통신서비스 제공자의 개인정보 유출 신고는 정보통신망법에 따라 과학기술정보통신부에 한다.","정보통신망법 제45조의3의 정보보호 최고책임자(CISO)와 개인정보 보호법 제31조의 개인정보 보호책임자(CPO)는 서로 다른 제도이다.","정보통신망법 제50조 광고성 정보 전송 제한은 2020년 개인정보 보호법으로 이관되었다.","ISMS와 ISMS-P는 서로 전혀 무관한 인증이다."],a:1,e:"2020 데이터3법으로 망법의 개인정보 조항(동의·유출신고 등)은 개보법으로 통합되었으나, CISO(망법 §45의3)·ISMS(§47)·침해사고 신고(§48의3)·광고성 정보(§50)는 망법에 남아 있다. ISMS-P는 ISMS에 개인정보 영역을 더한 통합 인증.",l:"망법 §45의3·§47·§50, 개보법 §31·§32의2"},
+// ===== 3과목 =====
+{s:3,t:"list",q:"개인정보 보호법 제15조제1항에 따라 정보주체의 동의 없이 개인정보를 수집·이용할 수 있는 경우가 아닌 것은?",o:["법률에 특별한 규정이 있거나 법령상 의무를 준수하기 위하여 불가피한 경우","정보주체와 체결한 계약을 이행하기 위하여 필요한 경우","개인정보처리자의 정당한 이익이 정보주체의 권리보다 명백히 우선하는 경우","개인정보처리자의 마케팅 효율을 높이기 위하여 필요한 경우"],a:3,e:"§15① 7가지: 동의 / 법령 / 공공기관 소관업무 / 계약 / 급박한 생명·신체·재산 / 정당한 이익(명백히 우선) / 공중위생 등 긴급. 마케팅 목적은 동의(그것도 §22①7호 구분 동의)가 필요하다.",l:"§15①"},
+{s:3,t:"list",q:"개인정보의 수집·이용 동의를 받을 때 정보주체에게 알려야 하는 사항(§15②)에 해당하지 않는 것은?",o:["개인정보의 수집·이용 목적","수집하려는 개인정보의 항목","개인정보를 제공받는 자","동의를 거부할 권리가 있다는 사실 및 거부에 따른 불이익"],a:2,e:"§15② 고지 4가지: 목적 / 항목 / 보유·이용 기간 / 거부권·불이익. ‘제공받는 자’는 제3자 제공 동의(§17②) 시 고지사항이다.",l:"§15②, §17②"},
+{s:3,t:"case",q:"다음 중 ‘제3자 제공’이 아니라 ‘처리 위탁’에 해당하는 것은?",box:"B쇼핑몰이 고객 개인정보를 외부 업체에 넘기는 상황들",o:["제휴 카드사가 자사 카드 발급 마케팅에 활용하도록 고객 명단을 넘긴 경우","배송대행업체가 B쇼핑몰 주문 상품을 배송하기 위해 고객 주소·연락처를 넘긴 경우","보험사가 자체 보험상품 추천을 위해 고객 정보를 요청하여 넘긴 경우","광고주가 자기 신제품을 홍보하도록 고객 이메일 목록을 넘긴 경우"],a:1,e:"위탁(§26)은 위탁자(B쇼핑몰)의 업무를 위해 수탁자가 처리하는 것이고, 제공(§17)은 받는 자의 목적·이익을 위해 넘기는 것이다. 배송은 B쇼핑몰 업무의 일부이므로 위탁(동의 불요, 문서·공개 의무).",l:"§17, §26"},
+{s:3,t:"list",q:"제18조제2항에서 공공기관에만 적용되는 목적 외 이용·제공 사유는?",o:["정보주체로부터 별도의 동의를 받은 경우","다른 법률에 특별한 규정이 있는 경우","범죄의 수사와 공소의 제기 및 유지를 위하여 필요한 경우","공중위생 등 공공의 안전과 안녕을 위하여 긴급히 필요한 경우"],a:2,e:"§18②5~9호(보호위원회 심의·의결 소관업무, 조약, 범죄수사, 재판, 형집행)는 공공기관만 해당. 1·2·3·10호는 민간도 가능.",l:"§18②"},
+{s:3,t:"num",q:"정보주체 이외로부터 수집한 개인정보의 수집 출처 통지에 관한 설명으로 옳지 않은 것은?",o:["정보주체의 요구가 있으면 즉시 수집 출처, 처리 목적, 처리정지·동의철회 권리를 알려야 한다.","5만명 이상의 민감정보·고유식별정보 또는 100만명 이상의 개인정보를 처리하는 자는 요구가 없어도 통지해야 한다.","대규모 처리자는 개인정보를 제공받은 날부터 6개월 이내에 통지해야 한다.","가명정보에 대해서는 수집 출처 통지 규정이 적용되지 않는다."],a:2,e:"시행령 §15의2②: 제공받은 날부터 3개월 이내(연 2회 이상 주기적 제공 시 연 1회). 가명정보는 §28의7에 따라 §20 적용 제외.",l:"§20, 시행령 §15의2, §28의7"},
+{s:3,t:"list",q:"제22조제1항에 따라 다른 동의와 구분하여 각각 동의를 받아야 하는 경우가 아닌 것은?",o:["제17조제1항제1호에 따라 제3자 제공 동의를 받는 경우","제23조제1항제1호에 따라 민감정보 처리 동의를 받는 경우","재화나 서비스를 홍보하거나 판매를 권유하기 위하여 동의를 받는 경우","제26조에 따라 개인정보 처리업무를 위탁하는 경우"],a:3,e:"구분 동의 8가지: §15①1, §17①1, §18②1, §19 1호, §23①1, §24①1, 홍보·판매권유, 기타 대통령령. 위탁(§26)은 동의 대상이 아니라 문서·공개 대상이다.",l:"§22①"},
+{s:3,t:"num",q:"만 14세 미만 아동의 개인정보 처리에 관한 설명으로 옳은 것은?",o:["아동의 법정대리인 동의가 필요하며, 동의 여부를 확인하여야 한다.","법정대리인 동의를 받기 위한 법정대리인의 성명·연락처도 반드시 법정대리인으로부터만 수집해야 한다.","만 16세 미만 아동이 기준이다.","법정대리인 동의 없이 처리한 경우 과태료만 부과되고 형벌은 없다."],a:0,e:"§22의2①: 법정대리인 동의 + 확인. ②: 동의에 필요한 최소 정보(성명·연락처)는 아동에게서 직접 수집 가능. 위반 시 과징금(§64의2①2) 및 5년/5천 벌칙(§71 3호).",l:"§22의2, §64의2, §71"},
+{s:3,t:"cmp",q:"시행령상 민감정보에 해당하는 것을 모두 고른 것은?",box:"ㄱ. 유전자검사 결과로 얻어진 유전정보   ㄴ. 범죄경력자료에 해당하는 정보   ㄷ. 여권번호   ㄹ. 특정 개인을 알아볼 목적으로 생성한 생체인식 특징정보   ㅁ. 인종·민족에 관한 정보",o:["ㄱ, ㄴ, ㄷ","ㄱ, ㄴ, ㄹ, ㅁ","ㄷ, ㄹ","ㄱ, ㄷ, ㅁ"],a:1,e:"시행령 §18 민감정보 4가지: 유전정보, 범죄경력자료, 생체인식 특징정보, 인종·민족 정보. 여권번호는 고유식별정보(시행령 §19).",l:"시행령 §18, §19"},
+{s:3,t:"ox",q:"주민등록번호 처리에 관한 설명으로 옳은 것은?",o:["정보주체의 별도 동의를 받으면 주민등록번호를 처리할 수 있다.","법률·대통령령·국회규칙 등에서 구체적으로 요구·허용하거나, 급박한 생명·신체·재산의 이익을 위해 명백히 필요하거나, 보호위원회 고시로 정하는 경우에만 처리할 수 있다.","주민등록번호는 암호화 대상이 아니다.","회원가입 시 주민등록번호 입력을 필수로 요구할 수 있다."],a:1,e:"§24의2①: 동의로는 불가. 법률·대통령령·각종 규칙(부령은 아님)·급박·고시 3가지만. ②암호화 보관 의무, ③주민번호 없는 가입 방법 제공 의무.",l:"§24의2"},
+{s:3,t:"list",q:"고정형 영상정보처리기기 안내판에 포함되어야 할 사항이 아닌 것은?",o:["설치 목적 및 장소","촬영 범위 및 시간","관리책임자의 연락처","영상정보의 보관 기간"],a:3,e:"§25④ 안내판: 설치 목적·장소 / 촬영 범위·시간 / 관리책임자 연락처 / 기타 대통령령(위탁 시 수탁자 명칭·연락처). 보관기간은 운영·관리 방침(시행령 §25) 기재사항.",l:"§25④, 시행령 §24·§25"},
+{s:3,t:"list",q:"개인정보 처리업무 위탁 시 문서에 포함되어야 하는 사항으로 옳지 않은 것은?",o:["위탁업무 수행 목적 외 개인정보의 처리 금지에 관한 사항","개인정보의 기술적·관리적 보호조치에 관한 사항","재위탁 제한에 관한 사항","정보주체의 서면 동의서 사본"],a:3,e:"§26① + 시행령 §28①: 목적 외 처리 금지, 기술·관리적 보호조치, 위탁 목적·범위, 재위탁 제한, 접근 제한 등 안전성 확보조치, 관리현황 점검 등 감독, 손해배상 책임. 위탁은 동의 대상이 아니다.",l:"§26①, 시행령 §28"},
+{s:3,t:"ox",q:"수탁자에 관한 설명으로 옳지 않은 것은?",o:["수탁자가 위탁받은 업무를 제3자에게 다시 위탁하려면 위탁자의 동의를 받아야 한다.","수탁자가 위탁 업무와 관련하여 법을 위반하여 발생한 손해배상책임에 대하여는 수탁자를 개인정보처리자의 소속 직원으로 본다.","위탁자가 수탁자에 대한 관리·감독 또는 교육을 소홀히 하여 수탁자가 법을 위반한 경우 위탁자에게 과징금을 부과할 수 있다.","수탁자에게는 제29조 안전조치의무가 준용되지 않는다."],a:3,e:"§26⑧에 따라 수탁자에게 §15~§18, §29 등 대부분의 의무가 준용된다(‘개인정보처리자’를 ‘수탁자’로 봄).",l:"§26⑥⑦⑧, §64의2①5"},
+{s:3,t:"list",q:"가명정보를 정보주체의 동의 없이 처리할 수 있는 목적(§28의2)으로 옳은 것은?",o:["통계작성, 과학적 연구, 공익적 기록보존","마케팅, 과학적 연구, 공익적 기록보존","통계작성, 상업적 광고, 학술연구","범죄수사, 통계작성, 기록보존"],a:0,e:"§28의2①: 통계작성·과학적 연구·공익적 기록보존. 과학적 연구에는 산업적 연구·민간투자 연구도 포함(§2 8호).",l:"§28의2, §2 8호"},
+{s:3,t:"num",q:"가명정보의 결합과 안전조치에 관한 설명으로 옳지 않은 것은?",o:["서로 다른 개인정보처리자 간 가명정보의 결합은 보호위원회 또는 관계 중앙행정기관의 장이 지정하는 전문기관이 수행한다.","결합된 정보를 전문기관 외부로 반출하려면 가명정보 또는 익명정보로 처리한 뒤 전문기관의 장의 승인을 받아야 한다.","가명정보 처리 관련 기록은 가명정보를 파기한 날부터 1년 이상 보관하여야 한다.","가명정보 처리 과정에서 특정 개인을 알아볼 수 있는 정보가 생성되면 즉시 처리를 중지하고 지체 없이 회수·파기하여야 한다."],a:2,e:"§28의4③: 파기한 날부터 3년 이상 보관.",l:"§28의3, §28의4, §28의5"},
+{s:3,t:"list",q:"가명정보에 대하여 적용이 제외되는 규정(§28의7)이 아닌 것은?",o:["제20조 수집 출처 등 통지","제34조제4항 유출등의 신고","제35조 개인정보의 열람","제37조 개인정보의 처리정지"],a:1,e:"§28의7: §20, §20의2, §27, §34①②(통지·가능성 통지), §35, §35의2, §36, §37 적용 제외. 유출 ‘신고’(§34④)와 안전조치(§29)는 가명정보에도 적용된다.",l:"§28의7"},
+{s:3,t:"list",q:"개인정보를 국외로 이전할 수 있는 경우(§28의8①)에 해당하지 않는 것은?",o:["정보주체로부터 국외 이전에 관한 별도의 동의를 받은 경우","이전받는 자가 보호위원회가 고시하는 개인정보 보호 인증을 받고 안전조치·권리보장 조치를 모두 한 경우","이전되는 국가의 개인정보 보호 수준이 이 법과 실질적으로 동등하다고 보호위원회가 인정하는 경우","개인정보처리자의 해외 자회사이므로 사내 규정에 따라 이전하는 경우"],a:3,e:"5가지 경로: 별도 동의 / 법률·조약 / 계약 이행 위한 처리위탁·보관(처리방침 공개 또는 고지) / 인증 / 동등 수준 인정. 사내 규정만으로는 불가.",l:"§28의8①"},
+{s:3,t:"num",q:"국외 이전 중지 명령을 받은 개인정보처리자는 명령을 받은 날부터 며칠 이내에 보호위원회에 이의를 제기할 수 있는가?",o:["7일","10일","15일","30일"],a:0,e:"§28의9②: 7일 이내. 보호위원회는 이의신청서를 받은 날부터 30일 내 결과 통지(시행령 §29의12).",l:"§28의9, 시행령 §29의12"},
+{s:3,t:"num",q:"정보주체의 열람·정정·삭제·처리정지 요구에 대한 조치 기한으로 옳은 것은?",o:["요구를 받은 날부터 7일 이내","요구를 받은 날부터 10일 이내","요구를 받은 날부터 14일 이내","요구를 받은 날부터 30일 이내"],a:1,e:"시행령 §41④·§43·§44: 모두 10일 이내. 정당한 사유가 있으면 사유를 알리고 연기 가능.",l:"§35~§37, 시행령 §41~§44"},
+{s:3,t:"ox",q:"제37조의2 자동화된 결정에 대한 정보주체의 권리에 관한 설명으로 옳지 않은 것은?",o:["완전히 자동화된 시스템으로 이루어진 결정이 정보주체의 권리·의무에 중대한 영향을 미치면 거부할 수 있다.","제15조제1항제1호(동의)·제2호(법령)·제4호(계약)에 근거하여 이루어진 결정에 대해서는 거부권이 인정되지 않는다.","정보주체는 거부와 별개로 해당 결정에 대한 설명 등을 요구할 수 있다.","자동화된 결정의 기준과 절차는 영업비밀이므로 공개 의무가 없다."],a:3,e:"§37의2④: 자동화된 결정의 기준·절차 등을 정보주체가 쉽게 확인할 수 있도록 공개하여야 한다.",l:"§37의2"},
+{s:3,t:"num",q:"손해배상에 관한 설명으로 옳은 것은?",o:["정보주체가 개인정보처리자의 고의·과실을 입증하여야 한다.","고의 또는 중대한 과실로 개인정보가 유출등이 된 경우 법원은 손해액의 3배까지 배상액을 정할 수 있다.","법정손해배상은 손해액 입증 없이 300만원 이하의 범위에서 청구할 수 있다.","손해배상을 청구한 정보주체는 법정손해배상 청구로 변경할 수 없다."],a:2,e:"§39①: 처리자가 고의·과실 없음을 입증해야 면책(입증책임 전환). §39③: 5배(2023 개정). §39의2: 300만원, 사실심 변론종결 전 변경 가능.",l:"§39, §39의2"},
+{s:3,t:"num",q:"손해배상책임의 이행을 위해 보험·공제 가입 또는 준비금 적립 의무가 있는 개인정보처리자의 시행령상 기준은?",o:["매출액 1억원 이상 + 정보주체 1천명 이상","매출액 10억원 이상 + 정보주체 일일평균 1만명 이상","매출액 100억원 이상 + 정보주체 10만명 이상","매출액 1,800억원 초과 + 정보주체 100만명 이상"],a:1,e:"시행령 §48의7①: 전년도 매출액등 10억원 이상 + 직전 3개월 일일평균 정보주체 1만명 이상(둘 다 충족). 공공기관·비영리법인 등은 제외.",l:"§39의7, 시행령 §48의7"},
+{s:3,t:"case",q:"다음 중 개인정보 보호법 위반이 아닌 것은?",o:["C병원이 환자 동의 없이 진료기록을 제약회사 마케팅용으로 제공하였다.","D학원이 수강생 모집을 위해 만 13세 학생의 전화번호를 학생 본인 동의만 받고 수집하였다.","E기관이 통계작성을 위해 가명처리한 정보를 정보주체 동의 없이 내부 연구에 이용하였다.","F회사가 선택항목 동의를 하지 않았다는 이유로 회원가입을 거부하였다."],a:2,e:"§28의2에 따라 통계작성 목적 가명정보 처리는 동의 없이 가능. 1은 §17·§23 위반, 2는 §22의2 위반(법정대리인 동의 필요), 4는 §22⑤ 위반.",l:"§28의2, §17, §22의2, §22⑤"},
+// ===== 4과목 =====
+{s:4,t:"list",q:"시행령 제30조제1항에 따른 안전성 확보 조치에 해당하지 않는 것은?",o:["내부 관리계획의 수립·시행 및 점검","개인정보처리시스템에 대한 접근 권한의 부여·변경·말소 기준 수립·시행","개인정보 침해사고 대응을 위한 접속기록의 보관 및 위·변조 방지","개인정보 보호 인증(ISMS-P)의 취득"],a:3,e:"시행령 §30① 8가지: 내부관리계획 / 접근권한 제한 / 접근통제 / 암호화 / 접속기록 / 악성프로그램 방지 / 물리적 조치 / 기타. 인증은 §32의2의 별도 제도(임의, 일정 규모는 2027년부터 의무).",l:"§29, 시행령 §30"},
+{s:4,t:"num",q:"개인정보처리시스템에 접속하는 개인정보취급자의 컴퓨터에 대하여 인터넷망 차단 조치를 하여야 하는 개인정보처리자의 기준은?",o:["전년도 말 기준 직전 3개월간 일일평균 이용자 수 10만명 이상","전년도 말 기준 직전 3개월간 일일평균 이용자 수 100만명 이상","전년도 말 기준 직전 3개월간 일일평균 이용자 수 1천만명 이상","매출액 1,800억원 초과"],a:1,e:"시행령 §30①3호 나목: 직전 3개월 일일평균 이용자 수 100만명 이상(정보통신망법상 이용자 기준). 고시상 다운로드·파기·접근권한 설정 가능 취급자의 컴퓨터가 대상.",l:"시행령 §30①3호"},
+{s:4,t:"list",q:"암호화에 관한 설명으로 옳지 않은 것은?",o:["비밀번호는 복호화되지 않도록 일방향 암호화하여 저장한다.","주민등록번호 등 보호위원회가 고시하는 정보는 암호화하여 저장하거나 이에 상응하는 조치를 한다.","정보통신망을 통하여 개인정보·인증정보를 송수신하는 경우 암호화하거나 이에 상응하는 조치를 한다.","개인정보취급자의 이름은 반드시 암호화하여 저장하여야 한다."],a:3,e:"시행령 §30①4호와 안전성 확보조치 기준 고시: 저장 시 암호화 대상은 비밀번호(일방향), 고유식별정보·생체인식정보·신용카드·계좌번호 등. 이름은 저장 암호화 의무 대상이 아니다.",l:"시행령 §30①4호, 안전성 확보조치 기준"},
+{s:4,t:"num",q:"안전성 확보조치 기준 고시상 접속기록의 보관·점검에 관한 설명으로 옳은 것은?",o:["접속기록은 6개월 이상 보관하고 분기 1회 점검한다.","접속기록은 1년 이상 보관하되, 5만명 이상의 고유식별·민감정보를 처리하거나 기간통신사업자인 경우 2년 이상 보관하고 월 1회 이상 점검한다.","접속기록은 3년 이상 보관하고 연 1회 점검한다.","접속기록 보관 의무는 공공기관에만 적용된다."],a:1,e:"고시 §8: 1년 이상 보관(5만명 이상 고유식별·민감정보 처리 또는 기간통신사업자는 2년 이상), 월 1회 이상 점검, 위·변조 방지를 위해 별도 저장장치에 백업.",l:"안전성 확보조치 기준 §8"},
+{s:4,t:"list",q:"안전성 확보조치 기준상 접속기록에 반드시 포함되어야 하는 항목이 아닌 것은?",o:["개인정보취급자의 식별정보(계정)","접속일시","접속지 정보(IP 등)","개인정보취급자의 주민등록번호"],a:3,e:"접속기록 기본 항목: 계정, 접속일시, 접속지 정보, 처리한 정보주체 정보, 수행업무. 취급자의 주민번호는 포함 대상이 아니며 오히려 수집 제한 대상.",l:"안전성 확보조치 기준 §2·§8"},
+{s:4,t:"ox",q:"접근 권한 관리에 관한 설명으로 옳지 않은 것은?",o:["개인정보취급자에게는 업무 수행에 필요한 최소한의 범위로 접근 권한을 부여한다.","전보·퇴직 등 인사이동 시 지체 없이 접근 권한을 변경·말소한다.","접근 권한 부여·변경·말소 내역은 기록하고 3년 이상 보관한다.","접속 비밀번호를 모든 취급자가 공유하여 관리 편의성을 높인다."],a:3,e:"고시 §5: 최소 권한, 인사이동 시 지체 없이 변경·말소, 권한 기록 3년 보관, 계정은 취급자별로 발급(공유 금지), 비밀번호 작성규칙·인증수단 적용.",l:"안전성 확보조치 기준 §5"},
+{s:4,t:"ox",q:"내부 관리계획에 관한 설명으로 옳은 것은?",o:["내부 관리계획은 모든 개인정보처리자가 아니라 공공기관만 수립한다.","개인정보 보호책임자 지정, 취급자 교육, 접근 권한·접속기록·암호화 등 세부 조치를 포함하여 수립·시행하고 점검한다.","내부 관리계획은 한번 수립하면 변경할 필요가 없다.","소상공인은 내부 관리계획 없이 어떠한 안전조치도 하지 않아도 된다."],a:1,e:"시행령 §30①1호: 취급자 관리·감독·교육, CPO 지정 등 조직 구성·운영, 각 조치의 세부사항을 포함한 내부 관리계획 수립·시행·점검(연 1회 이상 점검). 1만명 미만 소상공인 등 일부는 수립 생략 가능하나 다른 조치는 이행.",l:"시행령 §30①1호, 고시 §4"},
+{s:4,t:"num",q:"개인정보 유출등의 통지·신고에 관한 설명으로 옳지 않은 것은?",o:["유출등을 알게 된 때에는 서면등의 방법으로 72시간 이내에 정보주체에게 통지하여야 한다.","1천명 이상의 정보주체에 관한 개인정보가 유출등이 된 경우 72시간 이내에 보호위원회 또는 한국인터넷진흥원에 신고하여야 한다.","정보주체의 연락처를 알 수 없는 경우 홈페이지에 7일 이상 게시하는 것으로 통지를 갈음할 수 있다.","2026년 개정으로 유출등의 ‘가능성’을 알게 된 때에도 가능성 있는 모든 정보주체에게 통지하여야 한다."],a:2,e:"시행령 §39③: 홈페이지 30일 이상 게시로 갈음(홈페이지 없으면 사업장 30일 게시). 통지 72시간, 신고 3유형(1천명·민감/고유식별·외부 불법접근) 72시간, 가능성 통지는 §34②(2026).",l:"§34, 시행령 §39·§39의2·§40"},
+{s:4,t:"list",q:"보호위원회 또는 한국인터넷진흥원에 유출등의 신고를 하여야 하는 경우가 아닌 것은?",o:["1천명 이상의 정보주체에 관한 개인정보가 유출등이 된 경우","민감정보 또는 고유식별정보가 유출등이 된 경우","개인정보처리시스템에 대한 외부로부터의 불법적인 접근에 의해 유출등이 된 경우","개인정보취급자가 실수로 회원 1명의 이메일 주소를 다른 회원에게 잘못 발송한 경우"],a:3,e:"시행령 §40① 신고 3유형. 1명의 이메일 오발송은 신고 대상이 아니지만, 해당 정보주체에 대한 ‘통지’(§34①)는 필요하다.",l:"시행령 §40"},
+{s:4,t:"case",q:"다음 사례에서 G사가 취해야 할 조치로 가장 적절한 것은?",box:"G사(이용자 300만명)는 DB 서버에 대한 외부 불법 접근 흔적을 11월 1일 09시에 발견했다. 어떤 회원의 정보가 빠져나갔는지 아직 특정하지 못했고, 11월 3일 현재 조사 중이다.",o:["유출 정보주체가 특정될 때까지 아무런 통지·신고를 하지 않고 기다린다.","유출된 항목·경위가 모두 확인된 후에만 한꺼번에 통지·신고한다.","11월 4일 09시(72시간) 이내에 유출 가능성이 있는 모든 정보주체에게 가능성 통지를 하고, 외부 불법 접근 유출등 사실을 보호위원회·KISA에 우선 신고한 뒤 추가 확인 내용을 즉시 보완한다.","100만명 이상이므로 과기정통부에만 침해사고 신고를 하면 된다."],a:2,e:"2026 개정 §34② + 시행령 §39의2·3: 불법 접근으로 유출 의심되나 정보주체 특정 곤란 → 가능성 통지(72시간). 시행령 §40②: 미확인 시 확인된 내용으로 우선 신고 후 추가 신고. 망법 §48의3 침해사고 신고는 별도 병행.",l:"§34, 시행령 §39의2·§39의3·§40"},
+{s:4,t:"ox",q:"고정형 영상정보처리기기 운영자의 의무에 관한 설명으로 옳지 않은 것은?",o:["설치 목적과 다른 목적으로 임의 조작하거나 다른 곳을 비추어서는 안 된다.","녹음기능은 범죄 예방 목적인 경우에 한하여 사용할 수 있다.","영상정보가 유출등이 되지 않도록 제29조에 따른 안전조치를 하여야 한다.","설치·운영에 관한 사무를 위탁할 수 있으며, 공공기관은 대통령령으로 정하는 절차·요건에 따른다."],a:1,e:"§25⑤: 녹음기능은 어떠한 경우에도 사용할 수 없다(위반 시 3년/3천).",l:"§25"},
+{s:4,t:"ox",q:"공공시스템운영기관의 추가 안전조치(시행령 §30의2)에 관한 설명으로 옳지 않은 것은?",o:["공공시스템별로 작성한 안전성 확보조치를 내부 관리계획에 포함한다.","공공시스템 접속기록을 저장·분석·점검·관리한다.","정당한 권한 없이 또는 허용 권한을 초과하여 개인정보에 접근한 사실이 확인되면 지체 없이 정보주체에게 통지한다.","공공시스템운영협의회는 보호위원회가 설치·운영한다."],a:3,e:"시행령 §30의2⑤: 공공시스템운영기관이 시스템별로 운영협의회를 설치·운영(운영기관·수탁자·이용기관으로 구성). 그 밖에 전담부서·인력, 관리책임자 지정 의무.",l:"시행령 §30의2"},
+// ===== 5과목 =====
+{s:5,t:"list",q:"개인정보 보호책임자(CPO)의 업무(§31④)에 해당하지 않는 것은?",o:["개인정보 보호 계획의 수립 및 시행","개인정보 유출 및 오용·남용 방지를 위한 내부통제시스템의 구축","사업주 또는 대표자 및 이사회에 대한 개인정보 보호 현황 및 주요 사항의 보고","개인정보 보호위원회 위원의 추천"],a:3,e:"§31④ 9가지: 계획 수립·시행 / 인력·예산 / 대표자·이사회 보고(2026) / 실태 조사·개선 / 불만 처리·피해 구제 / 내부통제시스템 / 교육 / 개인정보파일 관리·감독 / 기타(처리방침, 자원관리, 파기).",l:"§31④, 시행령 §32⑤"},
+{s:5,t:"num",q:"2026년 개정법에 따라 CPO 지정·변경·해제 시 이사회 의결과 보호위원회 신고 의무가 있는 개인정보처리자가 아닌 것은?",o:["연간 매출액이 1,800억원을 초과하면서 100만명 이상의 정보주체 개인정보를 처리하는 자","재학생 수 2만명 이상인 대학","상급종합병원","전년도 매출액 10억원 이상인 모든 개인정보처리자"],a:3,e:"시행령 §32③: 매출 1,800억 초과 + (5만명 민감·고유식별 or 100만명) / 재학생 2만명 이상 대학 / 상급종합병원 / 공공시스템운영기관. 신고는 사유 발생 6개월 내.",l:"§31③, 시행령 §32③④"},
+{s:5,t:"ox",q:"개인정보 보호책임자 지정에 관한 설명으로 옳지 않은 것은?",o:["모든 개인정보처리자는 CPO를 지정해야 하며, 소상공인도 예외 없이 별도의 CPO를 두어야 한다.","CPO를 지정하지 않을 수 있는 경우 사업주 또는 대표자가 CPO가 된다.","공공기관 외의 개인정보처리자는 사업주·대표자 또는 임원 중에서 CPO를 지정한다.","개인정보처리자는 CPO가 업무를 독립적으로 수행할 수 있도록 보장하고 정당한 이유 없이 불이익을 주어서는 안 된다."],a:0,e:"§31① 단서·시행령 §32①: 소상공인은 CPO 지정 생략 가능(이 경우 대표자가 CPO).",l:"§31, 시행령 §32"},
+{s:5,t:"list",q:"개인정보 처리방침에 포함되어야 하는 사항이 아닌 것은?",o:["개인정보의 처리 목적과 처리 및 보유 기간","개인정보의 파기절차 및 파기방법","개인정보 보호책임자의 성명 또는 개인정보 보호업무 담당 부서의 명칭과 연락처","개인정보처리자의 직전 연도 매출액"],a:3,e:"§30① + 시행령 §31①: 목적, 처리·보유기간, 제3자 제공, 파기, 민감정보 공개 선택, 위탁, 가명정보, 권리·행사방법, CPO·부서 연락처, 쿠키 등 자동수집장치, 처리 항목, 국외이전, 안전조치, 국외 처리 국가명.",l:"§30①, 시행령 §31①"},
+{s:5,t:"ox",q:"개인정보 처리방침에 관한 설명으로 옳은 것은?",o:["처리방침의 내용과 정보주체와 체결한 계약의 내용이 다르면 처리방침이 우선한다.","처리방침은 인터넷 홈페이지에 지속적으로 게재하여 공개하며, 게재할 수 없으면 사업장 게시·관보·신문 등의 방법으로 공개한다.","보호위원회는 처리방침을 평가할 수 없다.","공공기관은 처리방침을 수립할 의무가 없다."],a:1,e:"§30③: 정보주체에게 유리한 것 적용. §30의2: 보호위원회 처리방침 평가·개선권고(2023). 공공기관은 등록대상 개인정보파일에 대해 수립.",l:"§30, §30의2, 시행령 §31"},
+{s:5,t:"num",q:"공공기관의 개인정보파일 등록에 관한 설명으로 옳은 것은?",o:["공공기관의 장은 개인정보파일 운용을 시작한 날부터 60일 이내에 보호위원회에 등록을 신청하여야 한다.","민간 기업도 개인정보파일을 보호위원회에 등록하여야 한다.","범죄 수사에 관한 사항을 기록한 개인정보파일도 등록 대상이다.","등록사항이 변경된 경우에는 등록할 필요가 없다."],a:0,e:"시행령 §34①: 60일 이내. 등록은 공공기관만, 국가안전·수사·범칙조사·일회성·비밀 파일은 제외(§32②), 변경 시 변경 등록.",l:"§32, 시행령 §34"},
+{s:5,t:"num",q:"공공기관이 개인정보 영향평가를 하여야 하는 개인정보파일 기준(시행령 §35)으로 옳지 않은 것은?",o:["5만명 이상의 정보주체에 관한 민감정보 또는 고유식별정보의 처리가 수반되는 개인정보파일","다른 개인정보파일과 연계하려는 경우로서 연계 결과 50만명 이상의 정보주체에 관한 개인정보가 포함되는 파일","100만명 이상의 정보주체에 관한 개인정보파일","10만명 이상의 정보주체에 관한 개인정보파일로서 외부 위탁 처리하는 파일"],a:3,e:"시행령 §35: 5만(민감·고유식별) / 50만(연계) / 100만(일반) / 영향평가 후 운용체계 변경 부분. 모두 전자적으로 처리 가능한 파일이 전제.",l:"§33, 시행령 §35"},
+{s:5,t:"ox",q:"개인정보 영향평가에 관한 설명으로 옳지 않은 것은?",o:["공공기관의 장은 보호위원회가 지정한 평가기관에 영향평가를 의뢰하여야 한다.","영향평가 결과는 보호위원회에 제출하고, 보호위원회는 이에 대해 의견을 제시할 수 있다.","영향평가를 한 개인정보파일을 등록할 때에는 영향평가 결과를 함께 첨부하여야 한다.","공공기관 외의 개인정보처리자는 영향평가를 할 수 없다."],a:3,e:"§33⑪: 공공기관 외 처리자는 침해 우려 시 영향평가를 하기 위하여 적극 노력하여야 한다(임의). 평가기관 지정 요건: 최근 5년 2억원 실적, 전문인력 10명 이상.",l:"§33, 시행령 §36"},
+{s:5,t:"num",q:"개인정보 보호 인증(ISMS-P)에 관한 설명으로 옳은 것은?",o:["인증의 유효기간은 1년이다.","보호위원회는 인증의 실효성 유지를 위하여 연 1회 이상 사후관리를 실시하여야 한다.","거짓이나 부정한 방법으로 인증을 받은 경우 보호위원회는 재량으로 인증을 유지할 수 있다.","인증심사원 자격은 보호위원회 위원장이 직접 부여한다."],a:1,e:"§32의2: 유효기간 3년, 사후관리 연 1회 이상, 거짓·부정 취득은 필수 취소, 인증기관(KISA 등)이 심사원 자격 관리. 인증기관 지정 요건: 심사원 5명 이상.",l:"§32의2, 시행령 §34의2~8"},
+{s:5,t:"cmp",q:"개인정보 보호책임자(CPO)와 정보보호 최고책임자(CISO)에 관한 설명으로 옳지 않은 것은?",o:["CPO는 개인정보 보호법 제31조, CISO는 정보통신망법 제45조의3에 근거한다.","CPO는 개인정보의 처리 및 보호 업무를 총괄하고, CISO는 정보보호 업무를 총괄한다.","일정 규모 이상의 정보통신서비스 제공자는 CISO를 지정하여 과학기술정보통신부장관에게 신고하여야 한다.","CPO와 CISO는 어떠한 경우에도 동일인이 겸직할 수 없다."],a:3,e:"겸직 금지는 일정 규모 이상 사업자의 CISO가 다른 업무(§45의3④ 외)를 겸직하는 경우에 한한다. 중소 규모에서는 동일인 지정이 가능.",l:"개보법 §31, 망법 §45의3"},
+{s:5,t:"case",q:"다음 사례에서 H대학(재학생 2만 5천명)이 2026년 9월 11일 이후 준수해야 할 사항으로 옳은 것은?",box:"H대학은 새 개인정보 보호책임자를 임명하려 한다. 또한 이사회에는 보호 현황을 한 번도 보고한 적이 없다.",o:["대학은 공공기관이므로 CPO 지정 의무가 없다.","CPO 지정 시 이사회 의결을 거치고 보호위원회에 6개월 이내 신고하며, CPO는 대표자 및 이사회에 보호 현황을 보고하여야 한다.","CPO 지정 후 1년 이내에 과학기술정보통신부에 신고하면 된다.","재학생 수와 무관하게 모든 학교는 이사회 의결 없이 교직원 중 아무나 지정하면 된다."],a:1,e:"시행령 §32③2호: 재학생 2만명 이상 대학은 이사회 의결·신고 대상. 신고는 사유 발생일부터 6개월 내(§32④). CPO 업무에 이사회 보고 포함(§31④3호).",l:"§31③④, 시행령 §32③④"},
+{s:5,t:"ox",q:"2026년 개정으로 신설된 제30조의3(사업주 또는 대표자의 책임)에 관한 설명으로 옳은 것은?",o:["대표자는 개인정보 보호에 관하여 어떠한 책임도 지지 않고 CPO에게 전적으로 위임한다.","사업주 또는 대표자는 개인정보의 안전한 처리 및 정보주체 권리 보호에 대한 최종적인 책임자로서 전문 인력과 충분한 예산 지원 등 총괄적인 관리 조치를 실효성 있게 하여야 한다.","대표자의 책임은 공공기관에만 적용된다.","대표자 책임 이행 정도는 과징금 산정과 무관하다."],a:1,e:"§30의3 신설. 시행령 §60의2⑤에 따라 보안투자 감경 판단 시 대표자 책임 이행 정도·CPO 체계 등을 고려한다.",l:"§30의3, 시행령 §60의2⑤"},
+{s:5,t:"ox",q:"국내대리인 지정에 관한 설명으로 옳지 않은 것은?",o:["국내에 주소 또는 영업소가 없는 개인정보처리자 중 전년도 매출액 1조원 이상 또는 국내 정보주체 일일평균 100만명 이상인 자는 국내대리인을 지정하여야 한다.","국내대리인은 유출등의 통지·신고, 불만 처리·피해 구제, 자료 제출 업무를 대리한다.","국내대리인의 지정은 구두로도 가능하다.","국내대리인이 그 업무와 관련하여 법을 위반한 경우 개인정보처리자가 그 행위를 한 것으로 본다."],a:2,e:"§31의2①: 국내대리인 지정은 문서로 한다. 2025 개정으로 국내 법인 중 지정 의무, 연 1회 교육·점검 관리·감독 추가.",l:"§31의2, 시행령 §32의3"}
+];
+// ===== 앱 =====
+const $=s=>document.querySelector(s);
+let set=[],answers={},idx=0;
+let wrongIds=new Set();try{wrongIds=new Set(JSON.parse(localStorage.getItem("cppg-wrong")||"[]"))}catch(_){}
+BANK.forEach((q,i)=>q.id=i);
+function saveWrong(){try{localStorage.setItem("cppg-wrong",JSON.stringify([...wrongIds]))}catch(_){}
+  $("#wrongCnt").textContent=wrongIds.size?`(${wrongIds.size})`:"";}
+function initSide(){
+  $("#subjects").innerHTML=Object.entries(SUBJ).map(([k,v])=>`<label class="chk"><input type="checkbox" name="s" value="${k}" checked><span class="dot" style="background:var(--s${k})"></span>${v} <span style="color:var(--muted);font-size:12px">(${BANK.filter(q=>q.s==k).length})</span></label>`).join("");
+  $("#types").innerHTML=Object.entries(TYPES).map(([k,v])=>`<label class="chk"><input type="checkbox" name="t" value="${k}" checked>${v} <span style="color:var(--muted);font-size:12px">(${BANK.filter(q=>q.t==k).length})</span></label>`).join("");
+  $("#bankInfo").textContent=`총 ${BANK.length}문항 · 5과목 × 5유형`;
+  saveWrong();
+}
+function picked(name){return [...document.querySelectorAll(`input[name=${name}]:checked`)].map(i=>i.value);}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function start(pool){
+  const s=picked("s"),t=picked("t");
+  let list=pool.filter(q=>s.includes(String(q.s))&&t.includes(q.t));
+  if(!list.length){$("#paper").innerHTML='<div class="empty">조건에 맞는 문제가 없음. 과목·유형을 더 골라줘.</div>';return;}
+  const n=parseInt($("#count").value,10);
+  set=shuffle([...list]).slice(0,n);answers={};idx=0;
+  render();
+}
+function render(){
+  const host=$("#paper");host.innerHTML="";
+  set.forEach((q,i)=>{
+    const card=document.createElement("div");card.className="card";card.style.setProperty("--sc",`var(--s${q.s})`);card.id="q"+i;
+    card.innerHTML=`<div class="top"><span class="qno">문 ${i+1}</span><span class="pill s">${SUBJ[q.s]}</span><span class="pill">${TYPES[q.t]}</span>${wrongIds.has(q.id)?'<span class="pill" style="background:var(--bad-soft);color:var(--bad)">이전 오답</span>':''}</div>
+      <p class="stem">${q.q}${q.box?`<span class="box">${q.box}</span>`:""}</p>
+      <ul class="opts">${q.o.map((o,k)=>`<li><button class="opt" data-q="${i}" data-k="${k}"><span class="k">${["①","②","③","④"][k]}</span><span>${o}</span></button></li>`).join("")}</ul>
+      <div class="actions"><button class="btn primary chkbtn" data-q="${i}" disabled>답변 확인</button><span class="verdict" id="v${i}"></span></div>
+      <div class="exp" id="e${i}"><h4>정답 ${["①","②","③","④"][q.a]}</h4><div class="why">${q.e}</div><div class="law">근거: ${q.l}</div></div>`;
+    host.appendChild(card);
+  });
+  updateStatus();
+}
+function updateStatus(){
+  const done=Object.keys(answers).length,ok=Object.values(answers).filter(x=>x).length;
+  $("#prog").textContent=`${done} / ${set.length}`;$("#score").textContent=ok;
+  $("#barfill").style.width=set.length?(done/set.length*100)+"%":"0";
+}
+document.addEventListener("click",e=>{
+  const opt=e.target.closest(".opt");
+  if(opt&&!opt.disabled){const i=opt.dataset.q;document.querySelectorAll(`.opt[data-q="${i}"]`).forEach(o=>o.classList.remove("sel"));opt.classList.add("sel");document.querySelector(`.chkbtn[data-q="${i}"]`).disabled=false;return;}
+  const chk=e.target.closest(".chkbtn");
+  if(chk){const i=+chk.dataset.q,q=set[i];const sel=document.querySelector(`.opt[data-q="${i}"].sel`);if(!sel)return;
+    const k=+sel.dataset.k,right=k===q.a;answers[i]=right;
+    document.querySelectorAll(`.opt[data-q="${i}"]`).forEach(o=>{o.disabled=true;if(+o.dataset.k===q.a)o.classList.add("right");else if(o===sel&&!right)o.classList.add("wrong");});
+    const v=$("#v"+i);v.textContent=right?"정답":"오답";v.className="verdict "+(right?"ok":"bad");
+    $("#e"+i).classList.add("on");chk.disabled=true;
+    if(right)wrongIds.delete(q.id);else wrongIds.add(q.id);saveWrong();updateStatus();
+    const next=document.getElementById("q"+(i+1));if(next)setTimeout(()=>next.scrollIntoView({behavior:"smooth",block:"start"}),250);
+  }
+});
+$("#start").onclick=()=>start(BANK);
+$("#retry").onclick=()=>{if(!wrongIds.size){$("#paper").innerHTML='<div class="empty">저장된 오답이 없음. 먼저 문제를 풀어봐.</div>';return;}start(BANK.filter(q=>wrongIds.has(q.id)));};
+$("#finish").onclick=()=>{
+  if(!set.length)return;
+  const done=Object.keys(answers).length,ok=Object.values(answers).filter(x=>x).length;
+  const bySubj={};set.forEach((q,i)=>{bySubj[q.s]=bySubj[q.s]||{n:0,ok:0};bySubj[q.s].n++;if(answers[i])bySubj[q.s].ok++;});
+  const pct=done?Math.round(ok/done*100):0;
+  const r=document.createElement("div");r.className="result";
+  r.innerHTML=`<div class="kicker">채점 결과</div><div class="big">${pct}점</div><div>${done}문항 중 ${ok}문항 정답 ${done<set.length?`(${set.length-done}문항 미응답)`:""}</div>
+   <table><tr><th>과목</th><th>문항</th><th>정답</th><th>정답률</th><th>과락(40%)</th></tr>${Object.entries(bySubj).map(([s,v])=>{const p=v.n?Math.round(v.ok/v.n*100):0;return `<tr><td>${SUBJ[s]}</td><td>${v.n}</td><td>${v.ok}</td><td>${p}%</td><td style="color:${p>=40?'var(--ok)':'var(--bad)'}">${p>=40?"통과":"미달"}</td></tr>`}).join("")}</table>
+   <p style="color:var(--muted);font-size:13px;margin-top:12px">실제 시험 합격 기준: 평균 60점 이상 + 과목별 40% 이상. 틀린 문제는 “오답만 다시 풀기”에 저장됨.</p>`;
+  $("#paper").prepend(r);r.scrollIntoView({behavior:"smooth"});
+};
+initSide();
+</script>
+
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+</script>
+</body>
+</html>

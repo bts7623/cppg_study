@@ -46,6 +46,78 @@ h1{font-family:var(--font-display);font-size:clamp(24px,4vw,34px);margin:0 0 4px
 .bl{display:inline-block;background:var(--mark);color:var(--mark);border-radius:4px;padding:0 6px;cursor:pointer;min-width:28px;text-align:center;font-weight:700;border:0;font:inherit;line-height:1.4}
 .bl.open{color:var(--mark-fg)}
 .bl:hover{outline:1px solid var(--accent)}
+/* 학습 모드: 빈칸 없이 정답을 형광펜 강조로 그대로 읽기 */
+body.study .bl{background:transparent;color:var(--hl);padding:0;min-width:0;border-radius:0;cursor:default;box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--mark) 90%,var(--hl) 10%);pointer-events:none}
+body.study .bl:hover{outline:0}
+body.study #hideAll,body.study #showAll{display:none}
+#studyMode[aria-pressed="true"],#onlyLeft[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* 모드 전환: 카드 보기 / 문제풀이 / 숫자 드릴 */
+.modes{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.mode{font:inherit;font-size:14px;font-weight:600;background:var(--paper);border:1px solid var(--line);color:var(--fg);padding:9px 16px;border-radius:8px;cursor:pointer}
+.mode[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.mode:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.panel{display:none}.panel.on{display:block}
+/* 안 외운 것만 보기: 외운 카드는 제목만 */
+body.onlyleft .card.done{padding:8px 16px}
+body.onlyleft .card.done>*:not(h3):not(.memo){display:none}
+body.onlyleft .card.done h3{margin:0;font-size:15px;color:var(--muted)}
+/* 조문 링크 → 관계도 */
+a.law{color:var(--accent);text-decoration:none;border-bottom:1px dotted var(--accent)}
+a.law:hover{border-bottom-style:solid}
+/* 문제풀이 */
+.qbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;font-size:13px;color:var(--muted)}
+.qbar select{font:inherit;font-size:13px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--fg)}
+.qbar label{display:flex;align-items:center;gap:5px}
+.qbar .prog b{color:var(--fg)}
+.qcard{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 18px 16px;max-width:760px}
+.qcard .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-bottom:8px}
+.qcard .badge.wrong{background:color-mix(in srgb,var(--hl) 15%,var(--paper));color:var(--hl)}
+.qcard .badge.right{background:var(--done-soft);color:var(--done)}
+.qcard .badge.fresh{background:var(--bg);color:var(--muted)}
+.qcard .from{font-size:12px;color:var(--muted);margin-bottom:6px}
+.qcard .from b{color:var(--fg);font-family:var(--font-display);font-size:15px}
+.qctx{font-size:15px;line-height:1.75;margin:6px 0 14px}
+.qctx table{font-size:14px}
+.qctx td,.qctx th{padding:5px 8px}
+.qctx .shown{font-weight:600}
+.qctx .blank{display:inline-block;min-width:64px;border-bottom:2px solid var(--hl);color:transparent;background:var(--mark);border-radius:3px 3px 0 0;padding:0 8px;text-align:center}
+.qctx .blank.show{color:var(--mark-fg);font-weight:700}
+.qctx ol.steps li::before{top:7px}
+.qans{display:none;background:var(--bg);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:14px}
+.qans.on{display:block}
+.qans .a{font-family:var(--font-display);font-size:19px;color:var(--hl);font-weight:700;margin-bottom:4px}
+.qans .exp{color:var(--muted);font-size:13.5px}
+.qact{display:flex;gap:8px;flex-wrap:wrap}
+.qact .btn{font-size:15px;padding:10px 18px;font-weight:600}
+.qact .btn.show{background:var(--accent);color:#fff;border-color:var(--accent)}
+.qact .btn.ok{border-color:var(--done);color:var(--done)}
+.qact .btn.no{border-color:var(--hl);color:var(--hl)}
+.qact .btn.ok:hover{background:var(--done);color:#fff}
+.qact .btn.no:hover{background:var(--hl);color:#fff}
+.qend{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:20px;max-width:760px}
+.qend .big{font-family:var(--font-display);font-size:40px;color:var(--accent);font-variant-numeric:tabular-nums}
+.qend table{margin-top:10px;font-size:13.5px}
+.srsnote{font-size:12.5px;color:var(--muted);margin-top:10px}
+/* 숫자 드릴 */
+.drill{max-width:760px}
+.drill .q{font-size:17px;font-weight:600;margin:0 0 12px;text-wrap:balance}
+.drill .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.drill .two button{font:inherit;font-family:var(--font-display);font-size:24px;font-weight:700;padding:22px 10px;background:var(--paper);border:2px solid var(--line);border-radius:12px;cursor:pointer;color:var(--fg)}
+.drill .two button:hover{border-color:var(--accent)}
+.drill .two button.right{border-color:var(--done);background:var(--done-soft)}
+.drill .two button.wrong{border-color:var(--hl);background:color-mix(in srgb,var(--hl) 12%,var(--paper))}
+.drill .two button:disabled{cursor:default}
+.drill .hint{font-size:13px;color:var(--muted);margin-top:10px;min-height:1.6em}
+.drill .timer{height:5px;background:var(--line);border-radius:3px;margin:12px 0;overflow:hidden}
+.drill .timer i{display:block;height:100%;background:var(--accent);width:100%;transition:width 1s linear}
+.foot-link{font-size:13px;color:var(--muted);margin-top:30px;text-align:center}
+.foot-link button{font:inherit;font-size:13px;background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer}
+@media (max-width:760px){
+  .mode[data-mode="cards"]{display:none}
+  .qcard,.qend,.drill{max-width:none}
+  .drill .two button{font-size:20px;padding:18px 8px}
+}
+@media (min-width:761px){.foot-link{display:none}}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 table{border-collapse:collapse;width:100%;font-size:14px}
 th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
@@ -71,12 +143,12 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 </style>
 </head>
 <body>
-
 <nav class="appnav" aria-label="앱 메뉴">
   <a href="/" class="brand">CPPG</a>
   <a href="/map" data-p="map">관계도</a>
   <a href="/quiz" data-p="quiz">연습문제</a>
   <a href="/memo" data-p="memo">암기노트</a>
+  <a href="/guide" data-p="guide">이용 가이드</a>
 </nav>
 <style>
 .appnav{position:sticky;top:0;z-index:40;display:flex;gap:4px;align-items:center;background:var(--paper);border-bottom:1px solid var(--line);padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-top:calc(8px + env(safe-area-inset-top,0px));font-family:var(--font-body);font-size:14px;overflow-x:auto}
@@ -85,19 +157,51 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 .appnav .brand{font-family:var(--font-display);font-weight:700;color:var(--accent);font-size:16px;margin-right:auto}
 </style>
 <script>(function(){var p=location.pathname.replace(/^\/|\.html$/g,'')||'index';document.querySelectorAll('.appnav a[data-p]').forEach(function(a){if(a.dataset.p===p)a.classList.add('on');});})();</script>
+
 <div class="wrap">
 <div class="kicker">CPPG 개인정보관리사 · 핵심 암기</div>
 <h1>CPPG 암기노트</h1>
-<p class="lead">노란 빈칸은 누르면 열림. 외운 카드는 오른쪽 위 ‘외웠음’ 체크(브라우저에 저장). 2026.9.11 시행 개정법·시행령 반영.</p>
+<p class="lead">세 가지 방식. <b>카드 보기</b>는 탭별 통독·빈칸 회상, <b>문제풀이</b>는 빈칸 하나씩 묻고 1·3·7·14일 뒤 다시 섞어 내는 복습, <b>숫자 드릴</b>은 헷갈리는 숫자 쌍 2지선다. 진행 기록은 이 브라우저에만 저장. 2026.9.11 시행 개정법·시행령·고시 반영.</p>
 
+<div class="modes" role="group" aria-label="학습 방식">
+  <button class="mode" data-mode="cards" aria-pressed="true">카드 보기</button>
+  <button class="mode" data-mode="quiz" aria-pressed="false">문제풀이 <span id="dueBadge" class="prog"></span></button>
+  <button class="mode" data-mode="drill" aria-pressed="false">숫자 드릴</button>
+</div>
+
+<!-- ===== 문제풀이 패널 ===== -->
+<section class="panel" id="p-quiz">
+  <div class="qbar">
+    <label>문항 <select id="qN"><option value="10">10</option><option value="20" selected>20</option><option value="40">40</option></select></label>
+    <label>범위 <select id="qScope"><option value="all">전체 탭</option><option value="num">숫자·기준</option><option value="proc">절차</option><option value="list">목록</option><option value="cmp">비교</option><option value="who">이해관계 주체</option><option value="gosi">안전조치 고시</option><option value="fill">빈칸 문장</option></select></label>
+    <label><input type="checkbox" id="qReviewOnly"> 복습분만</label>
+    <button class="btn" id="qStart">새 세션</button>
+    <span class="prog">진행 <b id="qProg">0 / 0</b> · 맞힘 <b id="qOk">0</b></span>
+  </div>
+  <div id="qHost"></div>
+  <p class="srsnote">복습 규칙: 맞히면 1 → 3 → 7 → 14 → 30일 뒤, 틀리면 다음 날 다시. 세션은 기한이 된 오답을 먼저 넣고, 맞혔던 것도 일부 섞은 뒤 새 항목으로 채움.</p>
+</section>
+
+<!-- ===== 숫자 드릴 패널 ===== -->
+<section class="panel" id="p-drill">
+  <div class="qbar"><span>헷갈리는 숫자 쌍 20개를 10초 안에 고르기. 두 숫자 중 <b>맞는 쪽</b>을 누름.</span><button class="btn" id="dStart">시작</button><span class="prog">진행 <b id="dProg">0 / 0</b> · 맞힘 <b id="dOk">0</b></span></div>
+  <div class="drill" id="dHost"></div>
+</section>
+
+<!-- ===== 카드 보기 패널 ===== -->
+<section class="panel on" id="p-cards">
 <div class="tabs" role="tablist">
   <button class="tab" role="tab" aria-selected="true" data-view="num">숫자·기준</button>
   <button class="tab" role="tab" aria-selected="false" data-view="proc">절차 암기</button>
   <button class="tab" role="tab" aria-selected="false" data-view="list">목록 + 초성·연상법</button>
   <button class="tab" role="tab" aria-selected="false" data-view="cmp">비교·구별표</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="who">이해관계 주체</button>
+  <button class="tab" role="tab" aria-selected="false" data-view="gosi">안전조치 고시</button>
   <button class="tab" role="tab" aria-selected="false" data-view="fill">빈칸 문장</button>
 </div>
 <div class="toolbar">
+  <button class="btn" id="studyMode" aria-pressed="false" title="빈칸 없이 정답을 강조 표시로 읽는 모드">학습 모드 (빈칸 없이)</button>
+  <button class="btn" id="onlyLeft" aria-pressed="false" title="외웠음 체크한 카드는 제목만 남기고 접음">안 외운 것만</button>
   <button class="btn" id="hideAll">빈칸 전부 가리기</button>
   <button class="btn" id="showAll">빈칸 전부 열기</button>
   <span class="prog">외웠음 <b id="doneN">0</b> / <span id="totalN">0</span> 카드</span>
@@ -107,28 +211,28 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <!-- ===== 숫자·기준 ===== -->
 <section class="view on" id="v-num">
 <p class="sec-note">시험에서 가장 많이 바꿔치기하는 숫자. 빈칸을 먼저 떠올리고 눌러 확인.</p>
-<div class="card" data-k="n1"><label class="memo"><input type="checkbox">외웠음</label><h3>기한 (시간·일)</h3><div class="ref">§34·§35~§37·§28의9·§47·§49·§63의2 등</div>
+<div class="card" data-k="n1"><label class="memo"><input type="checkbox">외웠음</label><h3>기한 (시간·일)</h3><div class="ref">제34조·제35조~제37조·제28조의9·제47조·제49조·제63조의2 등</div>
 <div class="tblbox"><table>
 <tr><th>상황</th><th>기한</th><th>비고</th></tr>
 <tr><td>유출등 정보주체 통지</td><td><button class="bl" data-a="72시간">?</button> 이내</td><td>지체 없이. 긴급조치·천재지변 시 해소 후 즉시</td></tr>
 <tr><td>유출등 보호위원회·KISA 신고</td><td><button class="bl" data-a="72시간">?</button> 이내</td><td>1천명 / 민감·고유식별 / 외부 불법접근</td></tr>
 <tr><td>유출 가능성 통지(2026)</td><td><button class="bl" data-a="72시간">?</button> 이내</td><td>불법접근 알게 된 때부터</td></tr>
 <tr><td>연락처 모를 때 홈페이지 게시</td><td><button class="bl" data-a="30일">?</button> 이상</td><td>통지 갈음. 위탁·양도 통지도 30일</td></tr>
-<tr><td>열람·정정·삭제·처리정지 조치</td><td><button class="bl" data-a="10일">?</button> 이내</td><td>시행령 §41~44</td></tr>
-<tr><td>자동화 결정 거부·설명 조치</td><td><button class="bl" data-a="30일">?</button> 이내</td><td>60일까지 연장(시행령 §44의3)</td></tr>
+<tr><td>열람·정정·삭제·처리정지 조치</td><td><button class="bl" data-a="10일">?</button> 이내</td><td>시행령 제41조~44</td></tr>
+<tr><td>자동화 결정 거부·설명 조치</td><td><button class="bl" data-a="30일">?</button> 이내</td><td>60일까지 연장(시행령 제44조의3)</td></tr>
 <tr><td>국외이전 중지명령 이의제기</td><td><button class="bl" data-a="7일">?</button> 이내</td><td>보호위원회 결과 통지 30일</td></tr>
-<tr><td>사전 실태점검 시정권고 수락 통지</td><td><button class="bl" data-a="10일">?</button> 이내</td><td>§63의2③</td></tr>
+<tr><td>사전 실태점검 시정권고 수락 통지</td><td><button class="bl" data-a="10일">?</button> 이내</td><td>제63조의2 제3항</td></tr>
 <tr><td>분쟁조정 심사·조정안 작성</td><td><button class="bl" data-a="60일">?</button> 이내</td><td>연장 가능</td></tr>
 <tr><td>조정안 수락 여부 통지</td><td><button class="bl" data-a="15일">?</button> 이내</td><td>무응답 = 수락 간주</td></tr>
 <tr><td>집단분쟁조정 공고</td><td><button class="bl" data-a="14일">?</button> 이상</td><td>정보주체 50명 이상</td></tr>
-<tr><td>공공기관 개인정보파일 등록</td><td>운용 시작일부터 <button class="bl" data-a="60일">?</button> 이내</td><td>시행령 §34</td></tr>
+<tr><td>공공기관 개인정보파일 등록</td><td>운용 시작일부터 <button class="bl" data-a="60일">?</button> 이내</td><td>시행령 제34조</td></tr>
 <tr><td>수집출처 통지(대규모 처리자)</td><td>제공받은 날부터 <button class="bl" data-a="3개월">?</button> 이내</td><td>주기적 제공 시 연 1회</td></tr>
-<tr><td>이용·제공 내역 통지</td><td>연 <button class="bl" data-a="1회">?</button> 이상</td><td>§20의2</td></tr>
+<tr><td>이용·제공 내역 통지</td><td>연 <button class="bl" data-a="1회">?</button> 이상</td><td>제20조의2</td></tr>
 <tr><td>CPO 지정·변경 신고(2026)</td><td>사유 발생 <button class="bl" data-a="6개월">?</button> 이내</td><td>1년 범위 연장 가능</td></tr>
 <tr><td>CPO 지정 신고 대상 매출</td><td><button class="bl" data-a="1,800억원">?</button> 초과</td><td>+ 5만/100만명</td></tr>
 </table></div></div>
 
-<div class="card" data-k="n2"><label class="memo"><input type="checkbox">외웠음</label><h3>기간 (년)</h3><div class="ref">§7의4·§9·§28의4·§32의2·§40 등</div>
+<div class="card" data-k="n2"><label class="memo"><input type="checkbox">외웠음</label><h3>기간 (년)</h3><div class="ref">제7조의4·제9조·제28조의4·제32조의2·제40조 등</div>
 <div class="tblbox"><table>
 <tr><th>항목</th><th>기간</th><th>비고</th></tr>
 <tr><td>보호위원회 위원 임기</td><td><button class="bl" data-a="3년">?</button></td><td>1차 연임</td></tr>
@@ -136,17 +240,17 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <tr><td>기본계획 주기</td><td><button class="bl" data-a="3년">?</button>마다</td><td>시행계획·보호수준평가는 매년</td></tr>
 <tr><td>개인정보 보호 인증(ISMS-P) 유효기간</td><td><button class="bl" data-a="3년">?</button></td><td>사후관리 연 1회</td></tr>
 <tr><td>결합전문기관 지정 유효기간</td><td><button class="bl" data-a="3년">?</button></td><td>전문인력 3명 이상</td></tr>
-<tr><td>가명정보 처리 기록 보관</td><td>파기 후 <button class="bl" data-a="3년">?</button> 이상</td><td>§28의4③</td></tr>
+<tr><td>가명정보 처리 기록 보관</td><td>파기 후 <button class="bl" data-a="3년">?</button> 이상</td><td>제28조의4 제3항</td></tr>
 <tr><td>접속기록 보관</td><td><button class="bl" data-a="1년">?</button> (5만명 민감·고유식별/기간통신 <button class="bl" data-a="2년">?</button>)</td><td>월 1회 점검</td></tr>
-<tr><td>접근권한 부여·변경·말소 기록</td><td><button class="bl" data-a="3년">?</button> 이상</td><td>고시 §5</td></tr>
+<tr><td>접근권한 부여·변경·말소 기록</td><td><button class="bl" data-a="3년">?</button> 이상</td><td>고시 제5조</td></tr>
 <tr><td>고유식별정보 안전조치 조사 주기</td><td><button class="bl" data-a="3년">?</button>마다 1회 이상</td><td>1만명 공공 / 5만명 민간</td></tr>
-<tr><td>전송요구 전송내역 보관</td><td><button class="bl" data-a="3년">?</button></td><td>시행령 §42의6</td></tr>
+<tr><td>전송요구 전송내역 보관</td><td><button class="bl" data-a="3년">?</button></td><td>시행령 제42조의6</td></tr>
 <tr><td>과징금 10% 가중: 반복 위반 기준</td><td>처분 후 <button class="bl" data-a="3년">?</button> 이내</td><td>고의·중과실</td></tr>
-<tr><td>과징금 가산금</td><td>연 <button class="bl" data-a="6%">?</button>, 최대 <button class="bl" data-a="60개월">?</button></td><td>§64의2⑨</td></tr>
+<tr><td>과징금 가산금</td><td>연 <button class="bl" data-a="6%">?</button>, 최대 <button class="bl" data-a="60개월">?</button></td><td>제64조의2 제9항</td></tr>
 <tr><td>평가기관 요건: 최근 5년 실적</td><td><button class="bl" data-a="2억원">?</button> 이상</td><td>전문인력 10명</td></tr>
 </table></div></div>
 
-<div class="card" data-k="n3"><label class="memo"><input type="checkbox">외웠음</label><h3>인원·규모 기준</h3><div class="ref">시행령 §15의2·§21·§32·§35·§40·§48의7 등</div>
+<div class="card" data-k="n3"><label class="memo"><input type="checkbox">외웠음</label><h3>인원·규모 기준</h3><div class="ref">시행령 제15조의2·제21조·제32조·제35조·제40조·제48조의7 등</div>
 <div class="tblbox"><table>
 <tr><th>기준</th><th>숫자</th><th>적용</th></tr>
 <tr><td>영향평가 대상 (민감·고유식별)</td><td><button class="bl" data-a="5만명">?</button></td><td rowspan="3">공공기관, 전자적 파일</td></tr>
@@ -154,18 +258,18 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <tr><td>영향평가 대상 (일반)</td><td><button class="bl" data-a="100만명">?</button></td></tr>
 <tr><td>대규모 처리자(출처통지·내역통지·CPO 신고·전송)</td><td><button class="bl" data-a="5만명">?</button> 민감·고유식별 또는 <button class="bl" data-a="100만명">?</button></td><td>직전 3개월 일일평균</td></tr>
 <tr><td>유출 신고 인원</td><td><button class="bl" data-a="1천명">?</button> 이상</td><td>통지는 1명이라도</td></tr>
-<tr><td>인터넷망 차단</td><td>일일평균 이용자 <button class="bl" data-a="100만명">?</button> 이상</td><td>시행령 §30①3</td></tr>
+<tr><td>인터넷망 차단</td><td>일일평균 이용자 <button class="bl" data-a="100만명">?</button> 이상</td><td>시행령 제30조 제1항 제3호</td></tr>
 <tr><td>손해배상 보장(보험)</td><td>매출 <button class="bl" data-a="10억원">?</button> + 정보주체 <button class="bl" data-a="1만명">?</button></td><td>둘 다 충족</td></tr>
-<tr><td>국내대리인 지정</td><td>매출 <button class="bl" data-a="1조원">?</button> 또는 국내 정보주체 <button class="bl" data-a="100만명">?</button></td><td>§31의2</td></tr>
+<tr><td>국내대리인 지정</td><td>매출 <button class="bl" data-a="1조원">?</button> 또는 국내 정보주체 <button class="bl" data-a="100만명">?</button></td><td>제31조의2</td></tr>
 <tr><td>과징금 10% 가중: 피해 규모</td><td><button class="bl" data-a="1천만명">?</button> 이상</td><td>고의·중과실</td></tr>
 <tr><td>보호위원회 / 소위원회</td><td><button class="bl" data-a="9명">?</button> / <button class="bl" data-a="3명">?</button></td><td>분쟁조정위 <button class="bl" data-a="30명">?</button> 이내</td></tr>
 <tr><td>집단분쟁조정 요건</td><td>정보주체 <button class="bl" data-a="50명">?</button> 이상</td><td>쟁점 공통</td></tr>
 <tr><td>단체소송 원고</td><td>소비자단체 정회원 <button class="bl" data-a="1천명">?</button> / 비영리단체 구성원 <button class="bl" data-a="5천명">?</button>·정보주체 <button class="bl" data-a="100명">?</button> 요청</td><td>등록·활동 3년</td></tr>
-<tr><td>인증기관 심사원</td><td><button class="bl" data-a="5명">?</button> 이상</td><td>시행령 §34의6</td></tr>
+<tr><td>인증기관 심사원</td><td><button class="bl" data-a="5명">?</button> 이상</td><td>시행령 제34조의6</td></tr>
 <tr><td>아동 기준</td><td>만 <button class="bl" data-a="14세">?</button> 미만</td><td>법정대리인 동의</td></tr>
 </table></div></div>
 
-<div class="card" data-k="n4"><label class="memo"><input type="checkbox">외웠음</label><h3>금액 (제재)</h3><div class="ref">§64의2·§70~§75·§39·§39의2</div>
+<div class="card" data-k="n4"><label class="memo"><input type="checkbox">외웠음</label><h3>금액 (제재)</h3><div class="ref">제64조의2·제70조~제75조·제39조·제39조의2</div>
 <div class="tblbox"><table>
 <tr><th>구분</th><th>금액</th><th>대표 사유</th></tr>
 <tr><td>과징금 일반</td><td>전체 매출 <button class="bl" data-a="3%">?</button> / 산정곤란 <button class="bl" data-a="20억원">?</button></td><td>동의 없는 처리, 아동, 민감, 고유식별, 수탁자 감독 소홀, 재식별, 국외이전, 유출등</td></tr>
@@ -174,7 +278,7 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <tr><td>형벌 2단계</td><td><button class="bl" data-a="5년 / 5천만원">?</button></td><td>동의 없는 제3자 제공, 목적외, 아동, 민감, 고유식별, 가명 결합·반출·재식별, 누설, 훼손</td></tr>
 <tr><td>형벌 3단계</td><td><button class="bl" data-a="3년 / 3천만원">?</button></td><td>CCTV 임의조작·녹음, 부정 취득·동의, 직무상 비밀</td></tr>
 <tr><td>형벌 4단계</td><td><button class="bl" data-a="2년 / 2천만원">?</button></td><td>정정·삭제·처리정지 미조치 계속 이용, 비밀유지명령, 자료 거부·검사 방해</td></tr>
-<tr><td>양벌 (§70 위반 법인)</td><td><button class="bl" data-a="7천만원">?</button> 이하</td><td>그 외는 해당 조문 벌금형</td></tr>
+<tr><td>양벌 (제70조 위반 법인)</td><td><button class="bl" data-a="7천만원">?</button> 이하</td><td>그 외는 해당 조문 벌금형</td></tr>
 <tr><td>과태료 최고</td><td><button class="bl" data-a="5천만원">?</button></td><td>목욕실 등 금지 장소 고정형 설치 / 이동형 촬영</td></tr>
 <tr><td>과태료 2단계</td><td><button class="bl" data-a="3천만원">?</button></td><td>서비스 거부, 안전조치 미이행, 유출 통지·신고 미이행, 시정명령 불이행 등</td></tr>
 <tr><td>과태료 3단계</td><td><button class="bl" data-a="1천만원">?</button></td><td>처리방침·CPO·파일 등록·영향평가·보험 미이행</td></tr>
@@ -196,19 +300,19 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <!-- ===== 절차 ===== -->
 <section class="view" id="v-proc">
 <p class="sec-note">순서를 묻거나 “다음 단계는?”으로 나옴. 번호 순서 그대로 암기.</p>
-<div class="card" data-k="p1"><label class="memo"><input type="checkbox">외웠음</label><h3>유출등 사고 대응 절차</h3><div class="ref">§34, 시행령 §39·§39의2·§40</div>
+<div class="card" data-k="p1"><label class="memo"><input type="checkbox">외웠음</label><h3>유출등 사고 대응 절차</h3><div class="ref">제34조, 시행령 제39조·제39조의2·제40조</div>
 <ol class="steps">
 <li><b>인지</b> — 유출등(분실·도난·유출·<button class="bl" data-a="위조·변조·훼손">?</button>) 또는 유출 <button class="bl" data-a="가능성">?</button>을 알게 된 때</li>
-<li><b>긴급조치</b> — 접속경로 차단, 취약점 보완, 회수·삭제 등 피해 확산 방지 (§34③)</li>
+<li><b>긴급조치</b> — 접속경로 차단, 취약점 보완, 회수·삭제 등 피해 확산 방지 (제34조 제3항)</li>
 <li><b>통지</b> — <button class="bl" data-a="72시간">?</button> 내 서면등으로 정보주체에게 7가지(항목·시점경위·피해최소화방법·대응조치·담당부서·<button class="bl" data-a="법적 권리 안내">?</button>·기타). 미확인 시 확인된 내용으로 <button class="bl" data-a="우선 통지">?</button> 후 추가 통지</li>
 <li><b>신고</b> — 1천명·민감/고유식별·외부 불법접근 중 하나면 <button class="bl" data-a="72시간">?</button> 내 보호위원회 또는 <button class="bl" data-a="한국인터넷진흥원(KISA)">?</button>. 회수·삭제로 침해 가능성 현저히 낮아지면 생략 가능</li>
 <li><b>갈음</b> — 연락처 모르면 홈페이지 <button class="bl" data-a="30일">?</button> 게시 / 가능성 통지 후 미유출 확인 시 <button class="bl" data-a="즉시">?</button> 그 사실 통지</li>
-<li><b>사후</b> — 원인 분석·재발 방지, 손해배상(5배·300만원) 대비, 과징금(유출등 §29 다했으면 면제) 대응</li>
+<li><b>사후</b> — 원인 분석·재발 방지, 손해배상(5배·300만원) 대비, 과징금(유출등 제29조 다했으면 면제) 대응</li>
 </ol>
 <div class="key"><b>인기 폭발 긴급 통신, 갈아타긴 사후에</b><span class="how"><b>인</b>지 → <b>긴</b>급조치 → <b>통</b>지 → <b>신</b>고 → <b>갈</b>음 → <b>사</b>후. 연상: 유출이 터지면 인기 폭발하듯 전화통(통지·신고)이 불나고, 연락 안 되는 사람은 홈페이지로 갈아타고(갈음), 뒷정리는 사후에.</span></div>
 <div class="story">신고 3유형은 <b>천·민·외</b>: “천 명의 민간인이 외부(해커)에게” — 1천명 / 민감·고유식별 / 외부 불법접근. 통지는 1명이라도, 신고는 이 셋 중 하나.</div></div>
 
-<div class="card" data-k="p2"><label class="memo"><input type="checkbox">외웠음</label><h3>개인정보 영향평가(PIA) 절차</h3><div class="ref">§33, 시행령 §35~§38</div>
+<div class="card" data-k="p2"><label class="memo"><input type="checkbox">외웠음</label><h3>개인정보 영향평가(PIA) 절차</h3><div class="ref">제33조, 시행령 제35조~제38조</div>
 <ol class="steps">
 <li>대상 판단 — 전자적 파일 중 <button class="bl" data-a="5만·50만·100만">?</button> 또는 운용체계 변경</li>
 <li>보호위원회 지정 <button class="bl" data-a="평가기관">?</button>에 의뢰 (최근 5년 2억 실적·전문인력 10명)</li>
@@ -220,7 +324,7 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <div class="key"><b>대의(大義)로 평가서 제출하니 의견 달고 등록</b><span class="how"><b>대</b>상 → <b>의</b>뢰 → <b>평</b>가 → <b>제</b>출 → <b>의</b>견 → <b>등</b>록. 연상: 공공기관이 ‘대의명분’으로 평가기관에 맡기고, 보호위원회는 승인이 아니라 “의견”만 한 줄 달아준 뒤, 파일 등록 때 그 평가서를 첨부.</span></div>
 <div class="story">대상 숫자 <b>5·50·100 = 민·연·일</b>: “오(5)만 민감한 사람, 오십(50)만 연결하면, 백(100)만 일반인” — 민감·고유식별 5만 / 연계 50만 / 일반 100만.</div></div>
 
-<div class="card" data-k="p3"><label class="memo"><input type="checkbox">외웠음</label><h3>가명정보 결합·반출 절차</h3><div class="ref">§28의3, 시행령 §29의3</div>
+<div class="card" data-k="p3"><label class="memo"><input type="checkbox">외웠음</label><h3>가명정보 결합·반출 절차</h3><div class="ref">제28조의3, 시행령 제29조의3</div>
 <ol class="steps">
 <li>결합신청자가 <button class="bl" data-a="결합전문기관">?</button>에 결합신청서 + 서류(사업자등록, 대상 가명정보, 결합 목적 증명)</li>
 <li>전문기관이 특정 개인을 알아볼 수 없도록 <button class="bl" data-a="결합">?</button></li>
@@ -230,7 +334,7 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 </ol>
 <div class="key"><b>결혼 절차로 외우기: 신청 → 결혼 → 가명(혼인 전 가칭) → 심사 → 기록(가족관계등록)</b><span class="how"><b>신</b>청 → <b>결</b>합 → <b>가</b>명·익명 처리 → <b>심</b>사·승인 → <b>기</b>록. 연상: 서로 다른 두 집안(처리자)의 가명정보가 ‘결혼’하려면 혼인신고처(결합전문기관)에 신청하고, 결합한 뒤 밖으로 나갈 땐 신분을 가명·익명으로 바꿔 반출심사위원회 심사를 받고, 기록은 파기 후 3년 보관.</span></div></div>
 
-<div class="card" data-k="p4"><label class="memo"><input type="checkbox">외웠음</label><h3>분쟁조정 절차</h3><div class="ref">§43~§49</div>
+<div class="card" data-k="p4"><label class="memo"><input type="checkbox">외웠음</label><h3>분쟁조정 절차</h3><div class="ref">제43조~제49조</div>
 <ol class="steps">
 <li>정보주체·처리자가 분쟁조정위원회에 <button class="bl" data-a="신청">?</button> (공공기관은 조정에 응해야)</li>
 <li>자료 요청·출석 요구·<button class="bl" data-a="사실조사">?</button>(2023)</li>
@@ -242,26 +346,26 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <div class="key"><b>신조(信條)대로 권하는 안건, 수락하면 화해</b><span class="how"><b>신</b>청 → <b>조</b>사 → <b>권</b>고(합의) → 조정<b>안</b> → <b>수</b>락 → <b>화</b>해. 연상: “믿음(신조)을 갖고 권한 안건을 수락하니 화해로 끝난다.” 숫자는 <b>60·15</b> — “육십 대 어르신이 15일 안에 답 안 하면 고개 끄덕인 걸로(수락 간주)”.</span></div>
 <div class="story">집단분쟁조정은 앞에 <b>14·50</b> 붙이기: “열넷(14일 공고)이 모여 오십(50명) 명이 되면 집단”. 보호위 9명·3년 ↔ 조정위 30명·2년은 “작은 쪽이 오래(9명 3년), 큰 쪽이 짧게(30명 2년)”.</div></div>
 
-<div class="card" data-k="p5"><label class="memo"><input type="checkbox">외웠음</label><h3>국외이전 적법성 체크 순서</h3><div class="ref">§28의8~§28의11</div>
+<div class="card" data-k="p5"><label class="memo"><input type="checkbox">외웠음</label><h3>국외이전 적법성 체크 순서</h3><div class="ref">제28조의8~제28조의11</div>
 <ol class="steps">
 <li>이전인가? — 국외 <button class="bl" data-a="제공(조회 포함)·처리위탁·보관">?</button> 모두 ‘이전’</li>
 <li>5가지 중 하나: 별도 <button class="bl" data-a="동의">?</button> / 법률·조약 / 계약 이행 위한 위탁·보관 + 처리방침 공개 또는 고지 / <button class="bl" data-a="인증">?</button> + 조치 / 보호위원회 <button class="bl" data-a="동등 수준">?</button> 인정</li>
 <li>동의라면 5가지 고지: 항목 / 국가·시기·방법 / 받는 자 / 목적·기간 / 거부 방법·효과</li>
 <li>보호조치(안전조치·고충처리·기타) 협의 후 계약 반영, 법 위반 계약 금지</li>
 <li>위반 시 <button class="bl" data-a="중지명령">?</button>(이의 7일) → 불이행 시 과징금</li>
-<li>받은 자가 제3국 재이전 → §28의8·9 <button class="bl" data-a="준용">?</button></li>
+<li>받은 자가 제3국 재이전 → 제28조의8·9 <button class="bl" data-a="준용">?</button></li>
 </ol>
 <div class="key"><b>출국심사 5가지 서류: 동의 도장 · 법률 여권 · 계약서 · 인증서 · 동등국가 비자</b><span class="how"><b>동</b>의 / <b>법</b>률·조약 / <b>계</b>약 이행 위탁·보관 / <b>인</b>증 / <b>동</b>등 수준 인정. 연상: 개인정보가 출국하려면 심사대에서 이 다섯 중 하나를 내민다. 맨 앞뒤가 둘 다 ‘동’(동의·동등)이라 “동동주 마시며 법·계·인 챙기기”.</span></div>
 <div class="story">주의: ‘계약’ 경로는 <b>처리위탁·보관</b>만 되고 ‘제공’은 안 됨. 중지명령 이의는 <b>7일</b> — “일주일 안에 항의”.</div></div>
 
-<div class="card" data-k="p6"><label class="memo"><input type="checkbox">외웠음</label><h3>행정 제재 에스컬레이션</h3><div class="ref">§61~§66, §64의2</div>
+<div class="card" data-k="p6"><label class="memo"><input type="checkbox">외웠음</label><h3>행정 제재 에스컬레이션</h3><div class="ref">제61조~제66조, 제64조의2</div>
 <ol class="steps">
-<li><button class="bl" data-a="의견제시·개선권고">?</button> (§61) → 이행 결과 통보</li>
-<li><button class="bl" data-a="사전 실태점검">?</button> → 시정권고 → 10일 내 수락 통지 (§63의2)</li>
-<li>자료제출 요구·출입검사 (§63)</li>
+<li><button class="bl" data-a="의견제시·개선권고">?</button> (제61조) → 이행 결과 통보</li>
+<li><button class="bl" data-a="사전 실태점검">?</button> → 시정권고 → 10일 내 수락 통지 (제63조의2)</li>
+<li>자료제출 요구·출입검사 (제63조)</li>
 <li><button class="bl" data-a="시정조치 명령">?</button>: 침해 중지 / 처리 일시정지 / 기타 (중앙행정기관·지자체·국회·법원·헌재·선관위는 권고)</li>
-<li>과징금 (§64의2) + 과태료 (§75) + <button class="bl" data-a="고발·징계권고">?</button> (§65)</li>
-<li>결과 공표 및 <button class="bl" data-a="공표명령">?</button> (§66)</li>
+<li>과징금 (제64조의2) + 과태료 (제75조) + <button class="bl" data-a="고발·징계권고">?</button> (제65조)</li>
+<li>결과 공표 및 <button class="bl" data-a="공표명령">?</button> (제66조)</li>
 </ol></div>
 </section>
 
@@ -269,67 +373,67 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <section class="view" id="v-list">
 <p class="sec-note">“포함되지 않는 것은?” 유형의 재료. 초성 키를 먼저 외우고 항목을 복원하는 연습.</p>
 <div class="grid">
-<div class="card" data-k="l1"><label class="memo"><input type="checkbox">외웠음</label><h3>수집·이용 근거 7</h3><div class="ref">§15①</div>
+<div class="card" data-k="l1"><label class="memo"><input type="checkbox">외웠음</label><h3>수집·이용 근거 7</h3><div class="ref">제15조 제1항</div>
 <div class="items"><span><b>동</b>의</span><span><b>법</b>률·법령상 의무</span><span><b>공</b>공기관 소관업무</span><span><b>계</b>약 체결·이행</span><span><b>급</b>박한 생명·신체·재산</span><span><b>정</b>당한 이익(명백히 우선)</span><span><b>공</b>중위생 등 긴급</span></div>
 <div class="key"><b>동네 법원 공무원이 계약하다 급하게 정공법으로 공중부양</b><span class="how"><b>동</b>의 → <b>법</b>령 → <b>공</b>공기관 → <b>계</b>약 → <b>급</b>박 → <b>정</b>당한 이익 → <b>공</b>중위생. 그림: 동네 법원 앞에서 공무원이 계약서에 사인하다 급해서 정공법으로 공중부양하는 장면 하나로 7개.</span></div>
-<div class="story">제3자 제공(§17)은 여기서 <b>‘계약’과 ‘정당한 이익’을 빼고</b> 동의만 더한 것 — “공무원이 계약·정공법은 못 쓰고 공중부양만”.</div></div>
+<div class="story">제3자 제공(제17조)은 여기서 <b>‘계약’과 ‘정당한 이익’을 빼고</b> 동의만 더한 것 — “공무원이 계약·정공법은 못 쓰고 공중부양만”.</div></div>
 
-<div class="card" data-k="l2"><label class="memo"><input type="checkbox">외웠음</label><h3>동의 시 고지사항 4 / 5</h3><div class="ref">§15② / §17②·§18③</div>
+<div class="card" data-k="l2"><label class="memo"><input type="checkbox">외웠음</label><h3>동의 시 고지사항 4 / 5</h3><div class="ref">제15조 제2항 / 제17조 제2항·제18조 제3항</div>
 <div class="items"><span><b>목</b>적</span><span><b>항</b>목</span><span><b>기</b>간(보유·이용)</span><span><b>거</b>부권·불이익</span><span>+ 제공 시 <b>받</b>는 자</span></div>
 <div class="key"><b>목 아파 항생제 먹는 기간, 거부권 있음 (+ 받는 사람 누구?)</b><span class="how"><b>목</b>적 → <b>항</b>목 → <b>기</b>간 → <b>거</b>부권·불이익. 수집은 이 4개. 제3자 제공·목적외 제공은 “약을 <b>받</b>는 사람이 누구?”를 맨 앞에 붙여 5개(받·목·항·기·거).</span></div>
 <div class="story">국외이전 동의 고지 5개는 여행 가방: <b>항</b>목·<b>국</b>가/시기/방법·<b>받</b>는 자·<b>목</b>적/기간·<b>거</b>부 — “항공권, 국가, 받는 사람, 목적, 거부”.</div></div>
 
-<div class="card" data-k="l3"><label class="memo"><input type="checkbox">외웠음</label><h3>구분 동의 8</h3><div class="ref">§22①</div>
-<div class="items"><span>§15 수집</span><span>§17 제공</span><span>§18 목적외</span><span>§19 받은 자 목적외</span><span>§23 <b>민</b>감</span><span>§24 <b>고</b>유식별</span><span><b>홍</b>보·판매권유</span><span>대통령령</span></div>
-<div class="key"><b>수제 목걸이 받은 민이가 고마워서 홍보령 내림</b><span class="how"><b>수</b>집 → <b>제</b>공 → <b>목</b>적외 → <b>받</b>은 자 → <b>민</b>감 → <b>고</b>유식별 → <b>홍</b>보·판매 → 대통령<b>령</b>. 앞 4개는 라이프사이클 순서(§15→17→18→19), 뒤 4개는 특수정보·마케팅·령.</span></div>
-<div class="story">함정: ‘위탁’(§26)과 ‘아동’(§22의2)은 이 목록에 없음 — “수제 목걸이는 위탁 안 하고 아이한테 안 준다”.</div></div>
+<div class="card" data-k="l3"><label class="memo"><input type="checkbox">외웠음</label><h3>구분 동의 8</h3><div class="ref">제22조 제1항</div>
+<div class="items"><span>제15조 수집</span><span>제17조 제공</span><span>제18조 목적외</span><span>제19조 받은 자 목적외</span><span>제23조 <b>민</b>감</span><span>제24조 <b>고</b>유식별</span><span><b>홍</b>보·판매권유</span><span>대통령령</span></div>
+<div class="key"><b>수제 목걸이 받은 민이가 고마워서 홍보령 내림</b><span class="how"><b>수</b>집 → <b>제</b>공 → <b>목</b>적외 → <b>받</b>은 자 → <b>민</b>감 → <b>고</b>유식별 → <b>홍</b>보·판매 → 대통령<b>령</b>. 앞 4개는 라이프사이클 순서(제15조→17→18→19), 뒤 4개는 특수정보·마케팅·령.</span></div>
+<div class="story">함정: ‘위탁’(제26조)과 ‘아동’(제22조의2)은 이 목록에 없음 — “수제 목걸이는 위탁 안 하고 아이한테 안 준다”.</div></div>
 
-<div class="card" data-k="l4"><label class="memo"><input type="checkbox">외웠음</label><h3>민감정보 vs 고유식별정보</h3><div class="ref">§23·시행령 §18 / §24·시행령 §19</div>
+<div class="card" data-k="l4"><label class="memo"><input type="checkbox">외웠음</label><h3>민감정보 vs 고유식별정보</h3><div class="ref">제23조·시행령 제18조 / 제24조·시행령 제19조</div>
 <div class="items"><span>법: 사상·신념</span><span>노조·정당 가입탈퇴</span><span>정치적 견해</span><span>건강</span><span>성생활</span><span>령: <b>유</b>전정보</span><span><b>범</b>죄경력</span><span><b>생</b>체인식</span><span><b>인</b>종·민족</span></div>
 <div class="key"><b>사신(死神)이 노조·정당 들고 정치하면 건강도 성생활도 털린다 + 유별난 범생이 인종</b><span class="how">법률 7: <b>사</b>상·<b>신</b>념·<b>노</b>조·<b>정</b>당·<b>정</b>치적 견해·<b>건</b>강·<b>성</b>생활. 시행령 4: <b>유</b>전정보·<b>범</b>죄경력·<b>생</b>체인식·<b>인</b>종민족 = “유별난 범생이 인종”. 민감정보는 ‘마음속·몸속’ 정보라고 묶어 기억.</span></div>
 <div class="items" style="margin-top:8px"><span><b>주</b>민등록번호</span><span><b>여</b>권번호</span><span><b>운</b>전면허번호</span><span><b>외</b>국인등록번호</span></div>
 <div class="key"><b>주여! 운전하다 외국까지 왔네</b><span class="how"><b>주</b>민번호·<b>여</b>권·<b>운</b>전면허·<b>외</b>국인등록번호. 고유식별정보는 ‘국가가 발급한 번호’ 4개뿐. 계좌·카드·사업자·법인번호는 아님.</span></div>
 <div class="story">구별 키워드: 민감정보는 법령에서 “요구·허용”, 고유식별정보는 법령에서 “<b>구체적으로</b> 요구·허용”, 주민번호는 동의로도 불가.</div></div>
 
-<div class="card" data-k="l5"><label class="memo"><input type="checkbox">외웠음</label><h3>목적 외 이용·제공 예외 (§18②)</h3><div class="ref">5~9호 공공기관 한정</div>
+<div class="card" data-k="l5"><label class="memo"><input type="checkbox">외웠음</label><h3>목적 외 이용·제공 예외 (제18조 제2항)</h3><div class="ref">5~9호 공공기관 한정</div>
 <div class="items"><span>1 별도 <b>동</b>의</span><span>2 다른 <b>법</b>률</span><span>3 <b>급</b>박</span><span>5 보호위 <b>심</b>의·의결</span><span>6 <b>조</b>약</span><span>7 <b>수</b>사·공소</span><span>8 <b>재</b>판</span><span>9 <b>형</b>집행</span><span>10 <b>공</b>중위생</span></div>
-<div class="key"><b>국가만 할 수 있는 일 5종: 심의 · 조약 · 수사 · 재판 · 형집행</b><span class="how">가운데 <b>심·조·수·재·형</b>만 공공기관 전용 — 전부 ‘국가 권력’이 하는 일이라 민간은 할 수 없다고 떠올리면 됨. 양 끝 <b>동·법·급 / 공</b>(동의·다른 법률·급박·공중위생)은 §15 수집 근거와 겹치니 민간도 가능.</span></div>
+<div class="key"><b>국가만 할 수 있는 일 5종: 심의 · 조약 · 수사 · 재판 · 형집행</b><span class="how">가운데 <b>심·조·수·재·형</b>만 공공기관 전용 — 전부 ‘국가 권력’이 하는 일이라 민간은 할 수 없다고 떠올리면 됨. 양 끝 <b>동·법·급 / 공</b>(동의·다른 법률·급박·공중위생)은 제15조 수집 근거와 겹치니 민간도 가능.</span></div>
 <div class="story">연상 문장: “심판이 조약서 들고 수사하고 재판해서 형 집행” — 심판(심의)부터 형집행까지 한 사람이 다 하는 장면.</div></div>
 
-<div class="card" data-k="l6"><label class="memo"><input type="checkbox">외웠음</label><h3>안전성 확보조치 8 (시행령 §30①)</h3><div class="ref">§29 → 시행령 §30 → 고시</div>
+<div class="card" data-k="l6"><label class="memo"><input type="checkbox">외웠음</label><h3>안전성 확보조치 8 (시행령 제30조 제1항)</h3><div class="ref">제29조 → 시행령 제30조 → 고시</div>
 <div class="items"><span>1 <b>내</b>부관리계획</span><span>2 <b>접</b>근권한 제한</span><span>3 <b>접</b>근통제</span><span>4 <b>암</b>호화</span><span>5 <b>접</b>속기록</span><span>6 <b>악</b>성프로그램</span><span>7 <b>물</b>리적 조치</span><span>8 <b>기</b>타</span></div>
 <div class="key"><b>내 집 지키기: 내부 계획 → 출입증(접근권한) → 경비(접근통제) → 금고 암호 → CCTV 기록(접속기록) → 해충 방제(악성코드) → 자물쇠(물리) → 기타</b><span class="how"><b>내</b>부관리계획 · <b>접</b>근권한 · <b>접</b>근통제 · <b>암</b>호화 · <b>접</b>속기록 · <b>악</b>성프로그램 · <b>물</b>리적 · <b>기</b>타. ‘접’이 세 번: 권한(누가) → 통제(어떻게 막나) → 기록(누가 들어왔나).</span></div>
 <div class="story">문장 버전: “<b>내 접접암 접악물기</b> — 내 집에 접근 두 번 막고, 암호 걸고, 접속기록 남기고, 악당 물리치고, 기타”. 관리적(내부계획) → 기술적(접·접·암·접·악) → 물리적 순.</div></div>
 
-<div class="card" data-k="l7"><label class="memo"><input type="checkbox">외웠음</label><h3>CPO 업무 9 (§31④)</h3><div class="ref">2026: 이사회 보고 추가</div>
+<div class="card" data-k="l7"><label class="memo"><input type="checkbox">외웠음</label><h3>CPO 업무 9 (제31조 제4항)</h3><div class="ref">2026: 이사회 보고 추가</div>
 <div class="items"><span>1 보호<b>계</b>획</span><span>2 <b>인</b>력·예산</span><span>3 대표자·이사회 <b>보</b>고</span><span>4 실태 <b>조</b>사·개선</span><span>5 <b>불</b>만·피해구제</span><span>6 <b>내</b>부통제시스템</span><span>7 <b>교</b>육</span><span>8 개인정보<b>파</b>일 관리</span><span>9 <b>기</b>타(처리방침·자원·파기)</span></div>
 <div class="key"><b>CPO의 하루: 아침에 계획 세우고 → 인력·예산 결재 받고 → 이사회에 보고 → 현장 조사 → 불만 전화 응대 → 내부통제 점검 → 오후 교육 → 파일 점검 → 기타 잡무</b><span class="how"><b>계</b>획 · <b>인</b>력예산 · <b>보</b>고 · <b>조</b>사 · <b>불</b>만 · <b>내</b>부통제 · <b>교</b>육 · <b>파</b>일 · <b>기</b>타. 하루 일과 순서로 9개를 시간 흐름에 얹어 기억.</span></div>
 <div class="story">2026 신설은 ‘<b>보</b>고’(대표자·이사회). 시행령 기타 3개는 “처리방침·자원관리·파기” — “방침 세우고 자원 쓰고 버리기”.</div></div>
 
-<div class="card" data-k="l8"><label class="memo"><input type="checkbox">외웠음</label><h3>처리방침 기재사항 (§30①)</h3><div class="ref">+ 시행령 §31①</div>
+<div class="card" data-k="l8"><label class="memo"><input type="checkbox">외웠음</label><h3>처리방침 기재사항 (제30조 제1항)</h3><div class="ref">+ 시행령 제31조 제1항</div>
 <div class="items"><span><b>목</b>적</span><span>처리·보유<b>기</b>간</span><span>제3자 <b>제</b>공</span><span><b>파</b>기 절차·방법</span><span>민감정보 <b>공</b>개 선택</span><span><b>위</b>탁</span><span><b>가</b>명정보</span><span>권리·<b>행</b>사방법</span><span><b>C</b>PO·부서 연락처</span><span><b>쿠</b>키 등 자동수집</span><span>령: 항목·국외이전·안전조치·처리 국가명</span></div>
 <div class="key"><b>식당 메뉴판으로 외우기: 뭘 파나(목적) · 영업시간(기간) · 배달업체(제공) · 음식물 폐기(파기) · 매운맛 선택(민감정보 공개 선택) · 배달대행(위탁) · 가명(가명정보) · 환불 방법(권리 행사) · 사장 연락처(CPO) · 쿠폰(쿠키)</b><span class="how"><b>목·기·제·파·공·위·가·행·C·쿠</b>. 처리방침은 ‘우리 가게가 손님 정보를 어떻게 다루는지’ 써 붙인 메뉴판. 시행령 추가 4개는 “항목·국외이전·안전조치·국가명”.</span></div>
 <div class="story">함정 보기: 매출액, 대표자 성명, 취급자 명단은 기재사항 아님. 계약과 다르면 <b>정보주체에게 유리한 것</b> 적용.</div></div>
 
-<div class="card" data-k="l9"><label class="memo"><input type="checkbox">외웠음</label><h3>유출 통지사항 7 (§34①)</h3><div class="ref">2026: 6호 법적 권리 안내 추가</div>
+<div class="card" data-k="l9"><label class="memo"><input type="checkbox">외웠음</label><h3>유출 통지사항 7 (제34조 제1항)</h3><div class="ref">2026: 6호 법적 권리 안내 추가</div>
 <div class="items"><span>1 유출 <b>항</b>목</span><span>2 <b>시</b>점·경위</span><span>3 피해 <b>최</b>소화 방법</span><span>4 <b>대</b>응조치·구제절차</span><span>5 <b>담</b>당부서·연락처</span><span>6 손해배상·분쟁조정 등 <b>법</b>적 권리</span><span>7 <b>기</b>타</span></div>
 <div class="key"><b>항시 최대한 담당자가 법적 안내까지, 기타</b><span class="how"><b>항</b>목 · <b>시</b>점경위 · <b>최</b>소화 방법 · <b>대</b>응조치 · <b>담</b>당부서 · <b>법</b>적 권리 · <b>기</b>타. 기자회견 순서로 떠올리기: “무엇이(항목) 언제 어떻게(시점·경위) 새 나갔고, 고객은 이렇게 하세요(최소화), 회사는 이렇게 했습니다(대응), 문의는 여기로(담당), 배상·조정 받으실 수 있습니다(법적 권리)”.</span></div>
-<div class="story">2026 추가는 6번 ‘<b>법</b>적 권리 안내’(손해배상·법정손해배상·분쟁조정). 가능성 통지(§34②)는 “항목·시점경위·최소화·대응·담당 + 확정되면 추가 통지” 구성.</div></div>
+<div class="story">2026 추가는 6번 ‘<b>법</b>적 권리 안내’(손해배상·법정손해배상·분쟁조정). 가능성 통지(제34조 제2항)는 “항목·시점경위·최소화·대응·담당 + 확정되면 추가 통지” 구성.</div></div>
 
-<div class="card" data-k="l10"><label class="memo"><input type="checkbox">외웠음</label><h3>과징금 9유형 (§64의2①)</h3><div class="ref">+ ② 가중 3유형</div>
-<div class="items"><span>1 §15·17·18·19 <b>무</b>단 처리</span><span>2 <b>아</b>동</span><span>3 <b>민</b>감</span><span>4 <b>고</b>유식별·주민번호</span><span>5 <b>수</b>탁자 감독 소홀</span><span>6 <b>재</b>식별</span><span>7 <b>국</b>외이전</span><span>8 중지명령 <b>불</b>이행</span><span>9 <b>유</b>출등(§29 다하면 면제)</span></div>
+<div class="card" data-k="l10"><label class="memo"><input type="checkbox">외웠음</label><h3>과징금 9유형 (제64조의2 제1항)</h3><div class="ref">+ ② 가중 3유형</div>
+<div class="items"><span>1 제15조·17·18·19 <b>무</b>단 처리</span><span>2 <b>아</b>동</span><span>3 <b>민</b>감</span><span>4 <b>고</b>유식별·주민번호</span><span>5 <b>수</b>탁자 감독 소홀</span><span>6 <b>재</b>식별</span><span>7 <b>국</b>외이전</span><span>8 중지명령 <b>불</b>이행</span><span>9 <b>유</b>출등(제29조 다하면 면제)</span></div>
 <div class="key"><b>무아지경으로 민감한 고객 정보 다루다, 수탁자 방치·재식별·국외 반출·불응하면 결국 유출</b><span class="how"><b>무</b>단처리 · <b>아</b>동 · <b>민</b>감 · <b>고</b>유식별 · <b>수</b>탁자 감독 · <b>재</b>식별 · <b>국</b>외이전 · <b>불</b>이행(중지명령) · <b>유</b>출등. 앞 4개는 ‘누구 정보를 함부로’, 뒤 5개는 ‘관리 실패’로 묶임.</span></div>
 <div class="story">가중 10%(2026) 셋은 <b>3·천·시</b>: “삼(3년) 년 안에 또, 천만(1천만명) 명이나, 시(시정명령)키는 것도 안 듣고” — 모두 고의·중과실 전제. 보안투자 감경은 고의·중과실이면 없음.</div></div>
 
-<div class="card" data-k="l11"><label class="memo"><input type="checkbox">외웠음</label><h3>개인정보파일 등록 제외 5 (§32②)</h3><div class="ref">공공기관</div>
+<div class="card" data-k="l11"><label class="memo"><input type="checkbox">외웠음</label><h3>개인정보파일 등록 제외 5 (제32조 제2항)</h3><div class="ref">공공기관</div>
 <div class="items"><span><b>국</b>가안전·외교</span><span><b>수</b>사·형집행·출입국</span><span>조세·관세 <b>범</b>칙조사</span><span><b>일</b>회성 파일</span><span><b>비</b>밀 분류</span></div>
 <div class="key"><b>국수 먹고 도망간 범인은 일회용 비밀</b><span class="how"><b>국</b>가안전 · <b>수</b>사·형집행 · <b>범</b>칙조사(조세·관세) · <b>일</b>회성 파일 · <b>비</b>밀 분류. 공통점: “국가가 숨겨야 하는 것 + 금방 사라지는 것”.</span></div>
-<div class="story">열람 거절 사유(§35④)는 다른 세트: “법률 금지 / 타인 침해 / 공공기관 업무 5(조세·성적입학·시험자격·보상금·감사조사)” — ‘세·성·시·보·감’ = “세상 시보감(시보 감찰)”.</div></div>
+<div class="story">열람 거절 사유(제35조 제4항)는 다른 세트: “법률 금지 / 타인 침해 / 공공기관 업무 5(조세·성적입학·시험자격·보상금·감사조사)” — ‘세·성·시·보·감’ = “세상 시보감(시보 감찰)”.</div></div>
 
-<div class="card" data-k="l12"><label class="memo"><input type="checkbox">외웠음</label><h3>가명정보 적용 제외 (§28의7)</h3><div class="ref">2026: §34② 추가</div>
-<div class="items"><span>§20 출처통지</span><span>§20의2 내역통지</span><span>§27 양도통지</span><span>§34①② 유출 통지</span><span>§35 열람</span><span>§35의2 전송</span><span>§36 정정삭제</span><span>§37 처리정지</span></div>
+<div class="card" data-k="l12"><label class="memo"><input type="checkbox">외웠음</label><h3>가명정보 적용 제외 (제28조의7)</h3><div class="ref">2026: 제34조 제2항 추가</div>
+<div class="items"><span>제20조 출처통지</span><span>제20조의2 내역통지</span><span>제27조 양도통지</span><span>제34조 제1항·제2항 유출 통지</span><span>제35조 열람</span><span>제35조의2 전송</span><span>제36조 정정삭제</span><span>제37조 처리정지</span></div>
 <div class="key"><b>가명정보는 ‘누구인지 모르니’ 알려줄 수도(통지 4) 찾아줄 수도(열·전·정·정) 없다</b><span class="how">통지 4(출처·내역·양도·유출) + 요구권 4(<b>열</b>람·<b>전</b>송·<b>정</b>정삭제·<b>정</b>지). 논리로 기억: 가명정보는 정보주체를 특정할 수 없으니 ‘그 사람에게 알리기’와 ‘그 사람이 찾아달라기’가 성립하지 않는다.</span></div>
-<div class="story">반대로 사람을 특정하지 않아도 되는 의무는 남음: 유출 <b>신고</b>(보호위원회에), <b>안전조치</b>(§29), 재식별 금지. “신고와 안전은 상대가 기관이라 가명이어도 한다”.</div></div>
+<div class="story">반대로 사람을 특정하지 않아도 되는 의무는 남음: 유출 <b>신고</b>(보호위원회에), <b>안전조치</b>(제29조), 재식별 금지. “신고와 안전은 상대가 기관이라 가명이어도 한다”.</div></div>
 </div>
 </section>
 
@@ -337,7 +441,7 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <section class="view" id="v-cmp">
 <p class="sec-note">두 제도를 섞어 묻는 ‘비교·구별’ 유형 대비.</p>
 <div class="card" data-k="c1"><label class="memo"><input type="checkbox">외웠음</label><h3>보호위원회 vs 분쟁조정위원회</h3>
-<div class="tblbox"><table class="cmp"><tr><td></td><th>개인정보 보호위원회 (§7)</th><th>분쟁조정위원회 (§40)</th></tr>
+<div class="tblbox"><table class="cmp"><tr><td></td><th>개인정보 보호위원회 (제7조)</th><th>분쟁조정위원회 (제40조)</th></tr>
 <tr><td>소속</td><td><button class="bl" data-a="국무총리">?</button> 소속 중앙행정기관</td><td>보호위원회에 설치</td></tr>
 <tr><td>인원</td><td><button class="bl" data-a="9명">?</button>(상임 2)</td><td><button class="bl" data-a="30명">?</button> 이내(위원장 1)</td></tr>
 <tr><td>임기</td><td><button class="bl" data-a="3년">?</button>, 1차 연임</td><td><button class="bl" data-a="2년">?</button>, 1차 연임</td></tr>
@@ -345,7 +449,7 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <tr><td>소위/조정부</td><td>소위 3명 전원</td><td>조정부 위원장 지정</td></tr></table></div></div>
 
 <div class="card" data-k="c2"><label class="memo"><input type="checkbox">외웠음</label><h3>제3자 제공 vs 처리 위탁</h3>
-<div class="tblbox"><table class="cmp"><tr><td></td><th>제3자 제공 (§17)</th><th>처리 위탁 (§26)</th></tr>
+<div class="tblbox"><table class="cmp"><tr><td></td><th>제3자 제공 (제17조)</th><th>처리 위탁 (제26조)</th></tr>
 <tr><td>누구 이익</td><td><button class="bl" data-a="받는 자">?</button>의 목적</td><td><button class="bl" data-a="위탁자">?</button>의 업무</td></tr>
 <tr><td>동의</td><td>원칙 <button class="bl" data-a="필요">?</button>(5가지 고지)</td><td><button class="bl" data-a="불요">?</button>, 문서·공개</td></tr>
 <tr><td>책임</td><td>받는 자가 독자 처리자</td><td>손해배상 시 수탁자 = <button class="bl" data-a="소속 직원">?</button></td></tr>
@@ -354,32 +458,151 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 <div class="story">연상: “배송 = 위탁(내 일), 카드사 제휴 = 제공(남의 일)”. 돈이 반대로 흐르면(내가 받으면) 제공일 가능성 큼.</div></div>
 
 <div class="card" data-k="c3"><label class="memo"><input type="checkbox">외웠음</label><h3>가명정보 vs 익명정보</h3>
-<div class="tblbox"><table class="cmp"><tr><td></td><th>가명정보 (§2 1호 다목)</th><th>익명정보 (§58의2)</th></tr>
+<div class="tblbox"><table class="cmp"><tr><td></td><th>가명정보 (제2조 1호 다목)</th><th>익명정보 (제58조의2)</th></tr>
 <tr><td>정의</td><td>추가 정보 없이는 식별 불가</td><td>시간·비용·기술 합리적 고려 시 다른 정보로도 <button class="bl" data-a="더 이상 식별 불가">?</button></td></tr>
 <tr><td>개인정보?</td><td><button class="bl" data-a="예">?</button></td><td><button class="bl" data-a="아니오(법 미적용)">?</button></td></tr>
 <tr><td>동의 없는 처리</td><td>통계·과학적 연구·공익적 기록보존</td><td>제한 없음</td></tr>
 <tr><td>안전조치</td><td>추가정보 분리, 기록 3년</td><td>해당 없음</td></tr></table></div></div>
 
 <div class="card" data-k="c4"><label class="memo"><input type="checkbox">외웠음</label><h3>과징금 vs 과태료 vs 형벌</h3>
-<div class="tblbox"><table class="cmp"><tr><td></td><th>과징금 (§64의2)</th><th>과태료 (§75)</th><th>형벌 (§70~73)</th></tr>
+<div class="tblbox"><table class="cmp"><tr><td></td><th>과징금 (제64조의2)</th><th>과태료 (제75조)</th><th>형벌 (제70조~73)</th></tr>
 <tr><td>성격</td><td>행정제재·부당이득 환수</td><td>질서벌</td><td>형사처벌</td></tr>
-<tr><td>부과</td><td>보호위원회</td><td>보호위원회</td><td>법원(고발 §65)</td></tr>
+<tr><td>부과</td><td>보호위원회</td><td>보호위원회</td><td>법원(고발 제65조)</td></tr>
 <tr><td>상한</td><td>매출 3%·20억 / 10%·50억</td><td>5천·3천·1천·5백만</td><td>10년·1억 ~ 2년·2천</td></tr>
-<tr><td>§29 안전조치 위반</td><td>유출 시(다했으면 면제)</td><td><button class="bl" data-a="3천만원">?</button></td><td><button class="bl" data-a="없음(2023 삭제)">?</button></td></tr>
+<tr><td>제29조 안전조치 위반</td><td>유출 시(다했으면 면제)</td><td><button class="bl" data-a="3천만원">?</button></td><td><button class="bl" data-a="없음(2023 삭제)">?</button></td></tr>
 <tr><td>병과</td><td colspan="2">같은 행위 과징금 부과 시 과태료 감경·미부과 가능</td><td>양벌규정</td></tr></table></div></div>
 
 <div class="card" data-k="c5"><label class="memo"><input type="checkbox">외웠음</label><h3>CPO vs CISO</h3>
 <div class="tblbox"><table class="cmp"><tr><td></td><th>개인정보 보호책임자 CPO</th><th>정보보호 최고책임자 CISO</th></tr>
-<tr><td>근거</td><td>개보법 <button class="bl" data-a="§31">?</button></td><td>정보통신망법 <button class="bl" data-a="§45의3">?</button></td></tr>
+<tr><td>근거</td><td>개보법 <button class="bl" data-a="제31조">?</button></td><td>정보통신망법 <button class="bl" data-a="제45조의3">?</button></td></tr>
 <tr><td>신고</td><td>2026~ 일정 규모 보호위원회(6개월)</td><td>일정 규모 <button class="bl" data-a="과학기술정보통신부">?</button></td></tr>
 <tr><td>자격</td><td>공공: 직급 / 민간: 대표자·임원, 대규모는 별표1 자격</td><td>정보보호 경력 요건, 겸직 제한(대규모)</td></tr>
 <tr><td>핵심 업무</td><td>처리·보호 총괄, 이사회 보고</td><td>정보보호 관리체계, 취약점·침해사고 대응</td></tr></table></div></div>
 
 <div class="card" data-k="c6"><label class="memo"><input type="checkbox">외웠음</label><h3>영향평가 vs 침해요인평가 vs 보호수준평가 vs 처리방침평가</h3>
-<div class="tblbox"><table class="cmp"><tr><td></td><th>영향평가 §33</th><th>침해요인평가 §8의2</th><th>보호수준평가 §11의2</th><th>처리방침평가 §30의2</th></tr>
+<div class="tblbox"><table class="cmp"><tr><td></td><th>영향평가 제33조</th><th>침해요인평가 제8조의2</th><th>보호수준평가 제11조의2</th><th>처리방침평가 제30조의2</th></tr>
 <tr><td>대상</td><td>공공기관 개인정보<button class="bl" data-a="파일">?</button></td><td>중앙행정기관 소관 <button class="bl" data-a="법령">?</button></td><td>공공기관 전체 운영</td><td>처리자의 <button class="bl" data-a="처리방침">?</button></td></tr>
 <tr><td>누가</td><td>평가기관(의뢰)</td><td>보호위원회(요청받아)</td><td>보호위원회 매년</td><td>보호위원회</td></tr>
 <tr><td>결과</td><td>제출→의견</td><td>개선 권고</td><td>공개·포상·권고</td><td>개선 권고</td></tr></table></div></div>
+</section>
+
+<!-- ===== 이해관계 주체 ===== -->
+<section class="view" id="v-who">
+<p class="sec-note">법에 나오는 ‘누가’. 처리 당사자(A)와 제도 운영 기관(B)을 층으로 나눠서 외우고, 각 주체가 실제 조직에서 누구인지 한 명씩 떠올리기.</p>
+
+<div class="card" data-k="w1"><label class="memo"><input type="checkbox">외웠음</label><h3>A. 처리 당사자 — 개인정보 흐름에 직접 관여</h3><div class="ref">제2조·제17조·제18조·제26조·제28조·제28조의8·제31조</div>
+<div class="tblbox"><table>
+<tr><th>주체</th><th>근거</th><th>한 줄 정의</th><th>실제 조직에서는</th></tr>
+<tr><td><b>정보주체</b></td><td>제2조 <button class="bl" data-a="3호">?</button></td><td>처리되는 정보로 알아볼 수 있는 <button class="bl" data-a="그 정보의 주체가 되는 사람">?</button></td><td>홈페이지 회원, 민원인, 임직원 본인</td></tr>
+<tr><td><b>개인정보처리자</b></td><td>제2조 <button class="bl" data-a="5호">?</button></td><td>업무 목적으로 <button class="bl" data-a="개인정보파일">?</button>을 운용하기 위해 처리하는 공공기관·법인·단체·개인. <b>조직</b>이지 사람이 아님</td><td>기관(법인) 그 자체. 과태료·과징금이 귀속되는 주체</td></tr>
+<tr><td><b>개인정보 보호책임자(CPO)</b></td><td><button class="bl" data-a="제31조">?</button></td><td>처리자가 지정하는 1명. 처리 업무 총괄, 내부관리계획, 침해 대응, 교육. 2023 개정으로 <button class="bl" data-a="독립성 보장·불이익 금지">?</button></td><td>공공기관: <button class="bl" data-a="임원">?</button>(임원 없으면 처리 부서장). 보통 기획·경영 본부장급. 소규모 민간은 <button class="bl" data-a="대표자">?</button>가 자동 CPO</td></tr>
+<tr><td><b>개인정보취급자</b></td><td><button class="bl" data-a="제28조">?</button></td><td>처리자의 <button class="bl" data-a="지휘·감독">?</button>을 받아 실제로 개인정보를 처리하는 임직원·파견·시간제 근로자</td><td>시스템 운영 담당자, 상담 직원, DB 접근 권한 있는 모든 직원</td></tr>
+<tr><td><b>위탁자 / 수탁자</b></td><td><button class="bl" data-a="제26조">?</button></td><td>처리 업무를 맡긴 자 / 맡은 자. 수탁자는 위탁 범위 내 처리자 규정 <button class="bl" data-a="준용">?</button>, 손해배상 시 <button class="bl" data-a="소속 직원">?</button>으로 봄</td><td>위탁자 = 기관, 수탁자 = 유지보수 용역사·콜센터·클라우드 사업자</td></tr>
+<tr><td><b>제3자</b></td><td><button class="bl" data-a="제17조·제18조">?</button></td><td>처리자로부터 제공받아 <button class="bl" data-a="자기 목적">?</button>으로 이용하는 외부 주체. 원칙 동의 필요</td><td>소관 부처, 교육청, 연계로 데이터를 받아가는 다른 기관</td></tr>
+<tr><td><b>국외 수신자</b></td><td><button class="bl" data-a="제28조의8">?</button></td><td>국외로 이전받는 자. 동의·계약·인증 등 요건, 보호위 <button class="bl" data-a="중지명령">?</button> 가능</td><td>해외 클라우드·SaaS 사업자, 해외 본사</td></tr>
+</table></div>
+<div class="story">연상: “<b>처리자는 회사, 나머지는 사람</b>”. 처리자(법인) 안에 CPO(책임) → 취급자(손). 밖으로 나가는 길은 둘 — 내 일 시키면 <b>위탁</b>, 남의 일에 주면 <b>제공</b>. 국경 넘으면 <b>국외 수신자</b>.</div></div>
+
+<div class="card" data-k="w2"><label class="memo"><input type="checkbox">외웠음</label><h3>B. 감독·분쟁·지원 기관 — 제도 운영 측</h3><div class="ref">제7조~·제32조의2·제33조·제40조~·제51조·제62조·제63조의2</div>
+<div class="tblbox"><table>
+<tr><th>기관</th><th>근거</th><th>역할</th><th>실제 조직</th></tr>
+<tr><td><b>개인정보 보호위원회</b></td><td>제7조~</td><td>중앙 감독기관. 정책·법령 해석, 조사·시정명령·과징금·과태료, 평가기관 지정, 국외이전 중지명령</td><td><button class="bl" data-a="국무총리">?</button> 소속 중앙행정기관(합의제). 위원 <button class="bl" data-a="9명">?</button>, 위원장 장관급</td></tr>
+<tr><td><b>분쟁조정위원회</b></td><td>제40조~</td><td>정보주체–처리자 간 분쟁 조정. 집단분쟁조정 포함. 조정 성립 = <button class="bl" data-a="재판상 화해">?</button> 효력</td><td>보호위원회에 설치, <button class="bl" data-a="30명">?</button> 이내. 공공기관은 참여 <button class="bl" data-a="의무">?</button></td></tr>
+<tr><td><b>침해 신고센터</b></td><td>제62조</td><td>침해 신고 접수·상담, 사실 조사</td><td>보호위가 <button class="bl" data-a="한국인터넷진흥원(KISA)">?</button>에 위탁 운영 — 118</td></tr>
+<tr><td><b>전문기관 (KISA 등)</b></td><td>시행령</td><td>유출 신고 접수, 기술지원, 조사 보조 등 보호위 업무 지원</td><td>유출 신고를 ‘보호위원회 <b>또는</b> KISA’에 하는 이유</td></tr>
+<tr><td><b>영향평가기관</b></td><td>제33조</td><td>공공기관 개인정보파일 구축·변경 시 영향평가 수행</td><td>보호위 <button class="bl" data-a="지정">?</button> 민간 평가기관. 전문인력 10명·실적 2억</td></tr>
+<tr><td><b>인증기관·심사기관 (ISMS-P)</b></td><td>제32조의2</td><td>개인정보 보호 관리체계 인증·심사</td><td>인증기관 <button class="bl" data-a="KISA·금융보안원">?</button>, 심사기관 다수. 유효 3년</td></tr>
+<tr><td><b>결합전문기관</b></td><td>제28조의3</td><td>서로 다른 처리자의 가명정보 결합, 반출 승인</td><td>보호위·관계부처 지정. 유효 <button class="bl" data-a="3년">?</button>, 전문인력 3명</td></tr>
+<tr><td><b>중앙행정기관의 장</b></td><td>제63조의2</td><td>소관 분야 처리자 자료 제출 요구·검사·사전 실태점검(보호위와 협력)</td><td>소관 부처가 산하 공공기관 점검</td></tr>
+<tr><td><b>단체소송 제기 단체</b></td><td>제51조</td><td>집단분쟁조정 거부·불수락 시 권리침해 <button class="bl" data-a="금지·중지">?</button> 청구</td><td>소비자단체(정회원 1천) / 비영리단체(구성원 5천·정보주체 100명 요청)</td></tr>
+<tr><td><b>법원</b></td><td>제39조·제51조</td><td>손해배상(징벌적 5배·법정 300만), 단체소송 재판, 형벌</td><td>—</td></tr>
+</table></div></div>
+
+<div class="card" data-k="w3"><label class="memo"><input type="checkbox">외웠음</label><h3>구조도 — 누가 누구에게</h3>
+<svg viewBox="0 0 760 300" width="100%" style="max-width:760px;display:block;margin:6px auto;font-family:var(--font-body)" role="img" aria-label="정보주체, 보호위원회, 개인정보처리자, 법원의 관계 구조도">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--muted)"/></marker></defs>
+<rect x="10" y="100" width="130" height="56" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="75" y="124" text-anchor="middle" font-size="15" font-weight="700" fill="var(--fg)">정보주체</text><text x="75" y="144" text-anchor="middle" font-size="11" fill="var(--muted)">권리 행사·신고·소송</text>
+<rect x="300" y="20" width="160" height="56" rx="10" fill="var(--paper)" stroke="var(--hl)" stroke-width="1.5"/><text x="380" y="44" text-anchor="middle" font-size="15" font-weight="700" fill="var(--fg)">개인정보 보호위원회</text><text x="380" y="64" text-anchor="middle" font-size="11" fill="var(--muted)">감독·조사·제재</text>
+<rect x="300" y="100" width="160" height="34" rx="8" fill="var(--bg)" stroke="var(--line)"/><text x="380" y="122" text-anchor="middle" font-size="12" fill="var(--fg)">분쟁조정위 (조정)</text>
+<rect x="300" y="142" width="160" height="34" rx="8" fill="var(--bg)" stroke="var(--line)"/><text x="380" y="164" text-anchor="middle" font-size="12" fill="var(--fg)">침해신고센터 (KISA)</text>
+<rect x="300" y="184" width="160" height="34" rx="8" fill="var(--bg)" stroke="var(--line)"/><text x="380" y="206" text-anchor="middle" font-size="12" fill="var(--fg)">영향평가·인증·결합기관</text>
+<rect x="300" y="240" width="160" height="44" rx="10" fill="var(--paper)" stroke="var(--line)"/><text x="380" y="267" text-anchor="middle" font-size="14" font-weight="700" fill="var(--fg)">법원</text>
+<rect x="590" y="20" width="160" height="56" rx="10" fill="var(--accent)" /><text x="670" y="44" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">개인정보처리자</text><text x="670" y="64" text-anchor="middle" font-size="11" fill="#fff" opacity=".85">= 법인 (의무·과징금 귀속)</text>
+<rect x="610" y="92" width="120" height="28" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="670" y="111" text-anchor="middle" font-size="12" fill="var(--fg)">CPO (책임·총괄)</text>
+<rect x="610" y="128" width="120" height="28" rx="6" fill="var(--accent-soft)" stroke="var(--accent)"/><text x="670" y="147" text-anchor="middle" font-size="12" fill="var(--fg)">취급자 (실제 처리)</text>
+<rect x="610" y="178" width="120" height="28" rx="6" fill="var(--bg)" stroke="var(--line)" stroke-dasharray="4 3"/><text x="670" y="197" text-anchor="middle" font-size="12" fill="var(--fg)">수탁자 (내 일)</text>
+<rect x="610" y="214" width="120" height="28" rx="6" fill="var(--bg)" stroke="var(--line)" stroke-dasharray="4 3"/><text x="670" y="233" text-anchor="middle" font-size="12" fill="var(--fg)">제3자 (남의 일)</text>
+<rect x="610" y="250" width="120" height="28" rx="6" fill="var(--bg)" stroke="var(--line)" stroke-dasharray="4 3"/><text x="670" y="269" text-anchor="middle" font-size="12" fill="var(--fg)">국외 수신자</text>
+<line x1="140" y1="115" x2="298" y2="50" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ar)"/><text x="205" y="70" text-anchor="middle" font-size="11" fill="var(--muted)">신고·조정 신청</text>
+<line x1="460" y1="48" x2="588" y2="48" stroke="var(--hl)" stroke-width="1.5" marker-end="url(#ar)"/><text x="524" y="40" text-anchor="middle" font-size="11" fill="var(--hl)">조사·시정명령·과징금</text>
+<line x1="140" y1="140" x2="298" y2="258" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ar)"/><text x="190" y="215" text-anchor="middle" font-size="11" fill="var(--muted)">손해배상·단체소송</text>
+<line x1="140" y1="128" x2="588" y2="110" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ar)"/><text x="370" y="95" text-anchor="middle" font-size="11" fill="var(--accent)">열람·정정·삭제·처리정지 요구 (10일)</text>
+<line x1="380" y1="76" x2="380" y2="98" stroke="var(--line)" stroke-width="1.5"/><line x1="380" y1="134" x2="380" y2="140" stroke="var(--line)"/><line x1="380" y1="176" x2="380" y2="182" stroke="var(--line)"/>
+<line x1="460" y1="262" x2="588" y2="262" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ar)"/><text x="524" y="285" text-anchor="middle" font-size="11" fill="var(--muted)">배상 판결·형벌(행위자+양벌)</text>
+</svg></div>
+
+<div class="card" data-k="w4"><label class="memo"><input type="checkbox">외웠음</label><h3>책임은 누가 지나 — 3층 구조</h3><div class="ref">제64조의2·제65조·제70조~제75조</div>
+<div class="tblbox"><table class="cmp">
+<tr><td></td><th>① 행정 책임</th><th>② 형사 책임</th><th>③ CPO 개인</th></tr>
+<tr><td>무엇</td><td>과징금·과태료·시정명령</td><td>징역·벌금</td><td>직무 책임(징계·인사)</td></tr>
+<tr><td>누구에게</td><td><button class="bl" data-a="개인정보처리자(법인)">?</button></td><td><button class="bl" data-a="행위자">?</button> + 양벌규정으로 법인 벌금</td><td>법상 직접 과태료·형벌 조항 <button class="bl" data-a="없음">?</button></td></tr>
+<tr><td>대표자는?</td><td>법인 명의로 부과, 개인 아님</td><td>본인이 행위자일 때만. 감독 다했으면 <button class="bl" data-a="면책">?</button></td><td>CPO 미지정 과태료도 <button class="bl" data-a="처리자(법인)">?</button>에 부과</td></tr>
+<tr><td>공공기관 특례</td><td>보호위 <button class="bl" data-a="징계 권고">?</button>(제65조) — ‘책임 있는 자’</td><td>공공기관 업무방해 변경·말소 10년/1억</td><td>독립성 보장·불이익 금지(제31조 제6항)</td></tr>
+</table></div>
+<div class="key"><b>“법인이 돈 내고, 행위자가 처벌받고, 감독 소홀이면 법인·관리자 추가”</b><span class="how">대표가 직원 잘못을 자동으로 지는 구조가 아님. 2023~2026 개정에서 강화된 건 법인 과징금(전체 매출 3%·공공기관 포함)과 CPO의 지위이지, 기관장 개인의 무과실 책임이 아님.</span></div></div>
+
+<div class="card" data-k="w5"><label class="memo"><input type="checkbox">외웠음</label><h3>이 탭 시험 함정 7</h3>
+<div class="items"><span>CPO는 <b>대표자</b>여야 한다 → X (공공: 임원, 소규모만 대표 자동)</span><span>과징금은 <b>CPO</b>에게 → X (처리자=법인)</span><span>침해신고센터 법적 주체는 <b>KISA</b> → X (보호위, KISA는 위탁 운영)</span><span>분쟁조정 참여 거부 가능 → 민간 O, <b>공공 X</b>(의무)</span><span>유지보수 용역사는 <b>제3자</b> → X (수탁자)</span><span>교육청 연계 제공은 <b>위탁</b> → X (제3자 제공·제18조)</span><span>영향평가는 <b>보호위원회</b>가 수행 → X (지정 평가기관이 수행, 결과 제출)</span></div>
+<div class="story">보호위 vs 조정위 vs KISA 구분, 위탁 vs 제공 구분, CPO vs 처리자 구분 — 이 셋만 확실하면 주체 문제는 대부분 풀림.</div></div>
+</section>
+
+<!-- ===== 안전조치 고시 (4과목) ===== -->
+<section class="view" id="v-gosi">
+<p class="sec-note">4과목(보호조치, 30%)의 세부 출처. 법 제29조 → 시행령 제30조 → ‘개인정보의 안전성 확보조치 기준’ 고시 순으로 내려오며, 시험은 고시의 숫자와 항목을 묻는다.</p>
+
+<div class="card" data-k="g1"><label class="memo"><input type="checkbox">외웠음</label><h3>내부 관리계획 (고시 제4조)</h3><div class="ref">시행령 제30조 제1항 제1호 · 고시 제4조</div>
+<div class="items"><span>CPO 지정</span><span>CPO·취급자 역할·책임</span><span>취급자 교육</span><span>접근권한</span><span>접근통제</span><span>암호화</span><span>접속기록</span><span>악성프로그램</span><span>물리적 조치</span><span>재해·재난 대비</span><span>수탁자 관리·감독</span><span>개인정보 유출 대응</span></div>
+<div class="sent">내부 관리계획은 <button class="bl" data-a="연 1회">?</button> 이상 이행 실태를 점검·관리한다. <button class="bl" data-a="1만명">?</button> 미만 정보주체를 처리하는 소상공인·개인·단체는 수립을 <button class="bl" data-a="생략">?</button>할 수 있다(다른 조치는 이행). 취급자 교육은 <button class="bl" data-a="정기적">?</button>으로 계획·실시.</div>
+<div class="story">내부관리계획 = “누가(CPO·취급자), 무엇을(8가지 조치), 어떻게 점검하나(연 1회)”를 적은 문서. 시험은 ‘포함되지 않는 항목’과 생략 가능 기준(1만명)을 묻는다.</div></div>
+
+<div class="card" data-k="g2"><label class="memo"><input type="checkbox">외웠음</label><h3>접근 권한 관리 (고시 제5조)</h3><div class="ref">시행령 제30조 제1항 제2호 · 고시 제5조</div>
+<div class="sent">업무 수행에 필요한 <button class="bl" data-a="최소한">?</button>의 범위로 차등 부여한다. 전보·퇴직 등 인사이동 시 <button class="bl" data-a="지체 없이">?</button> 변경·말소한다. 부여·변경·말소 기록은 <button class="bl" data-a="3년">?</button> 이상 보관한다. 계정은 취급자별로 발급하고 <button class="bl" data-a="공유">?</button>하지 않는다. 비밀번호 <button class="bl" data-a="작성규칙">?</button>을 수립·적용하고, 일정 횟수 이상 인증 실패 시 접근을 <button class="bl" data-a="제한">?</button>한다. 외부에서 접속할 때는 <button class="bl" data-a="안전한 인증수단">?</button>(인증서·보안토큰·일회용 비밀번호 등)을 적용한다.</div>
+<div class="key"><b>최소 · 지체없이 · 3년 · 공유금지 · 작성규칙 · 실패제한 · 인증수단</b><span class="how">“권한은 최소로 주고, 바뀌면 바로 끊고, 기록은 3년, 계정은 각자, 비밀번호 규칙, 틀리면 잠그고, 밖에서 오면 인증”. 2023 고시 통합으로 비밀번호 구성(영문·숫자·특수문자 조합 등) 세부 규정은 삭제되고 ‘작성규칙 수립’으로 일반화됨.</span></div></div>
+
+<div class="card" data-k="g3"><label class="memo"><input type="checkbox">외웠음</label><h3>접근 통제 (고시 제6조)</h3><div class="ref">시행령 제30조 제1항 제3호 · 고시 제6조</div>
+<div class="sent">정보통신망을 통한 불법 접근·침해 방지를 위해 <button class="bl" data-a="침입차단·침입탐지">?</button> 기능을 갖춘 장비를 설치·운영한다. 외부에서 처리시스템에 접속할 때는 <button class="bl" data-a="가상사설망(VPN)·전용선">?</button> 등 안전한 접속수단 또는 안전한 인증수단을 적용한다. 일일평균 이용자 <button class="bl" data-a="100만명">?</button> 이상 처리자는 개인정보 다운로드·파기·접근권한 설정이 가능한 취급자 컴퓨터의 <button class="bl" data-a="인터넷망을 차단">?</button>한다. 취급자가 일정 시간 업무 처리를 하지 않으면 자동으로 <button class="bl" data-a="접속을 차단">?</button>(최대 접속시간 제한)한다. 업무용 모바일 기기 분실·도난 대비 <button class="bl" data-a="비밀번호 설정">?</button> 등 보호조치, P2P·공유설정 등 통한 공개·유출 방지 조치.</div>
+<div class="story">접근 ‘권한’(제5조)은 사람 단위, 접근 ‘통제’(제6조)는 네트워크·시스템 단위. 인터넷망 차단 100만명은 시행령 제30조 제1항 제3호 나목에 직접 명시.</div></div>
+
+<div class="card" data-k="g4"><label class="memo"><input type="checkbox">외웠음</label><h3>암호화 (고시 제7조)</h3><div class="ref">시행령 제30조 제1항 제4호 · 고시 제7조</div>
+<div class="tblbox"><table>
+<tr><th>상황</th><th>조치</th></tr>
+<tr><td>비밀번호 저장</td><td><button class="bl" data-a="일방향(해시)">?</button> 암호화 — 복호화 불가</td></tr>
+<tr><td>고유식별정보·생체인식정보·신용카드번호·계좌번호 저장</td><td><button class="bl" data-a="암호화">?</button> 저장 (주민번호는 내부망이어도 무조건)</td></tr>
+<tr><td>정보통신망 송수신</td><td>개인정보·인증정보 <button class="bl" data-a="암호화">?</button> 또는 이에 상응하는 조치</td></tr>
+<tr><td>인터넷 구간·DMZ 저장</td><td><button class="bl" data-a="암호화">?</button> 필수</td></tr>
+<tr><td>내부망 저장 (주민번호 제외)</td><td><button class="bl" data-a="영향평가·위험도 분석">?</button> 결과에 따라 암호화 적용 여부·범위 결정</td></tr>
+<tr><td>업무용 컴퓨터·모바일 기기 저장</td><td><button class="bl" data-a="상용 암호화 소프트웨어">?</button> 또는 안전한 알고리즘으로 암호화</td></tr>
+<tr><td>암호키</td><td>생성·이용·보관·배포·파기 <button class="bl" data-a="절차 수립">?</button>·시행</td></tr>
+</table></div>
+<div class="story">함정: “이름·전화번호도 저장 시 암호화 의무” → X. 저장 암호화 의무 대상은 비밀번호·고유식별·생체인식·신용카드·계좌번호. 안전한 알고리즘 예: SHA-256(일방향), AES-128 이상, SEED, ARIA.</div></div>
+
+<div class="card" data-k="g5"><label class="memo"><input type="checkbox">외웠음</label><h3>접속기록 (고시 제8조)</h3><div class="ref">시행령 제30조 제1항 제5호 · 고시 제8조</div>
+<div class="items"><span>취급자 <b>계정</b></span><span><b>접속일시</b></span><span><b>접속지</b> 정보(IP)</span><span>처리한 <b>정보주체</b> 정보</span><span><b>수행업무</b></span></div>
+<div class="sent">접속기록은 <button class="bl" data-a="1년">?</button> 이상 보관·관리한다. 단, <button class="bl" data-a="5만명">?</button> 이상 정보주체의 고유식별·민감정보를 처리하거나 <button class="bl" data-a="기간통신사업자">?</button>인 경우 <button class="bl" data-a="2년">?</button> 이상. <button class="bl" data-a="월 1회">?</button> 이상 점검하고, 개인정보를 <button class="bl" data-a="다운로드">?</button>한 경우 그 사유를 확인한다. 위·변조·도난·분실 방지를 위해 안전하게 보관하고 <button class="bl" data-a="별도 저장장치">?</button>에 백업.</div>
+<div class="key"><b>계·일·지·주·업 — “계일지, 주업이 뭐냐”</b><span class="how">접속기록 5항목: <b>계</b>정·접속<b>일</b>시·접속<b>지</b>·정보<b>주</b>체·수행<b>업</b>무. 보관 1년(기본)·2년(5만 민감/고유식별·기간통신), 점검 월 1회. 취급자의 주민번호·비밀번호는 접속기록 항목이 아님.</span></div></div>
+
+<div class="card" data-k="g6"><label class="memo"><input type="checkbox">외웠음</label><h3>악성프로그램 방지 · 물리적 안전조치 (고시 제9조·제10조)</h3><div class="ref">시행령 제30조 제1항 제6·7호 · 고시 제9조·제10조</div>
+<div class="sent">백신 등 보안 프로그램을 설치·운영하고 <button class="bl" data-a="자동 업데이트">?</button> 기능을 사용하거나 <button class="bl" data-a="일 1회">?</button> 이상 업데이트한다. 악성프로그램 경보가 발령되거나 보안 업데이트가 공지되면 <button class="bl" data-a="즉시">?</button> 업데이트한다. 전산실·자료보관실 등 물리적 보관 장소에 <button class="bl" data-a="출입통제">?</button> 절차를 수립·운영하고, 개인정보가 포함된 서류·보조저장매체는 <button class="bl" data-a="잠금장치">?</button>가 있는 안전한 장소에 보관하며, 보조저장매체 <button class="bl" data-a="반출·입">?</button> 통제 절차를 둔다.</div></div>
+
+<div class="card" data-k="g7"><label class="memo"><input type="checkbox">외웠음</label><h3>재해·재난 대비 · 출력·복사 · 파기 (고시 제11조~제13조)</h3><div class="ref">고시 제11조·제12조·제13조</div>
+<div class="sent"><button class="bl" data-a="10만명">?</button> 이상 정보주체의 개인정보를 처리하는 처리자(공공시스템운영기관 포함)는 화재·홍수·단전 등에 대비해 <button class="bl" data-a="위기대응 매뉴얼">?</button>과 <button class="bl" data-a="백업·복구 계획">?</button>을 마련하고 정기 점검한다.<br>
+개인정보를 종이로 출력하거나 복사할 때는 용도를 <button class="bl" data-a="특정">?</button>하고 <button class="bl" data-a="최소한의 항목">?</button>만 출력한다.<br>
+파기는 복원 불가능하게: 완전파괴(<button class="bl" data-a="소각·파쇄">?</button>), 전용 <button class="bl" data-a="소자장비">?</button>, 데이터가 복원되지 않도록 <button class="bl" data-a="초기화·덮어쓰기">?</button>. 일부만 파기할 때 전자파일은 해당 부분을 복원 불가 삭제, 기록물·인쇄물은 해당 부분을 <button class="bl" data-a="마스킹·천공">?</button> 등으로 삭제.</div>
+<div class="story">파기 3가지 = “태우거나 갈거나(완전파괴), 자석으로 지우거나(소자), 덮어쓰거나”. 영향평가 5만·50만·100만과 재해대비 10만을 섞어 내는 문제 주의.</div></div>
+
+<div class="card" data-k="g8"><label class="memo"><input type="checkbox">외웠음</label><h3>공공시스템운영기관 특례 (시행령 제30조의2 · 고시 제14조)</h3><div class="ref">2023 신설</div>
+<div class="sent">공공시스템운영기관은 공공시스템별로 작성한 안전조치를 <button class="bl" data-a="내부 관리계획">?</button>에 포함하고, 개인정보 보호 <button class="bl" data-a="전담부서·인력">?</button>과 시스템별 <button class="bl" data-a="관리책임자">?</button>를 지정한다. 접근권한은 <button class="bl" data-a="인사정보와 연계">?</button>하여 부여·변경·말소하고, 접속기록을 <button class="bl" data-a="자동 분석">?</button>하여 비정상 행위를 탐지한다. 정당한 권한 없이 접근한 사실이 확인되면 <button class="bl" data-a="정보주체에게 통지">?</button>한다. 운영기관·수탁자·이용기관으로 <button class="bl" data-a="공공시스템운영협의회">?</button>를 설치·운영한다.</div>
+<div class="story">공공시스템 = 여러 기관이 함께 쓰는 대규모 공공 시스템(교육·복지·세무 등). 운영협의회는 보호위원회가 아니라 <b>운영기관</b>이 만든다.</div></div>
 </section>
 
 <!-- ===== 빈칸 문장 ===== -->
@@ -398,7 +621,7 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 </div></div>
 <div class="card" data-k="f3"><label class="memo"><input type="checkbox">외웠음</label><h3>처리 제한·가명·국외</h3><div class="sent">
 주민등록번호는 정보주체의 <button class="bl" data-a="동의">?</button>가 있어도 처리할 수 없고, 법률·대통령령·규칙에서 <button class="bl" data-a="구체적으로">?</button> 요구·허용한 경우 등에만 가능하며 <button class="bl" data-a="암호화">?</button>하여 보관한다.<br>
-고정형 영상정보처리기기 운영자는 <button class="bl" data-a="녹음기능">?</button>을 사용할 수 없다. 공개된 장소가 아닌 경우에는 §25가 적용되지 않는다.<br>
+고정형 영상정보처리기기 운영자는 <button class="bl" data-a="녹음기능">?</button>을 사용할 수 없다. 공개된 장소가 아닌 경우에는 제25조가 적용되지 않는다.<br>
 수탁자가 재위탁하려면 <button class="bl" data-a="위탁자의 동의">?</button>를 받아야 하며, 손해배상책임에서 수탁자는 처리자의 <button class="bl" data-a="소속 직원">?</button>으로 본다.<br>
 가명정보는 <button class="bl" data-a="통계작성·과학적 연구·공익적 기록보존">?</button>을 위하여 동의 없이 처리할 수 있고, 서로 다른 처리자 간 결합은 <button class="bl" data-a="결합전문기관">?</button>이 수행하며 반출은 전문기관장의 <button class="bl" data-a="승인">?</button>을 받는다.<br>
 국외이전 중지명령에 대해서는 <button class="bl" data-a="7일">?</button> 이내 이의를 제기할 수 있다.
@@ -418,27 +641,245 @@ h2.sec{font-family:var(--font-display);font-size:19px;margin:22px 0 8px}
 과징금은 전체 매출액의 <button class="bl" data-a="3%">?</button>, 고의·중과실로 3년 내 반복·<button class="bl" data-a="1천만명">?</button> 이상 피해·시정명령 불이행 후 유출이면 <button class="bl" data-a="10%">?</button>까지 부과할 수 있으며, 보안 투자 시 <button class="bl" data-a="감경">?</button>한다.
 </div></div>
 </section>
+</section><!-- /p-cards -->
+<p class="foot-link">휴대폰에서는 문제풀이·숫자 드릴이 기본입니다. <button id="forceCards">카드 전체 보기</button> (PC 권장)</p>
 </div>
 
 <script>
 const $=s=>document.querySelector(s);
-document.querySelectorAll(".bl").forEach(b=>{b.setAttribute("aria-label","빈칸 열기");});
+const MAP_URL="/map";
+const DAY=864e5;
+const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(_){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+// ===== 조문 번호 → 관계도 링크 =====
+function lawHref(num,sub){return `${MAP_URL}#a${num}${sub?"_"+sub:""}`;}
+function linkLaw(root){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.parentElement.closest(".bl,a,button,script")?NodeFilter.FILTER_REJECT:(/제\d+조/.test(n.nodeValue)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_SKIP)});
+  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+  nodes.forEach(n=>{
+    // 시행령·고시 표기가 바로 앞에 있으면 링크하지 않음
+    const parts=n.nodeValue.split(/(제\d+조(?:의\d+)?)/);if(parts.length<2)return;
+    const frag=document.createDocumentFragment();let prev="";
+    parts.forEach(p=>{const m=p.match(/^제(\d+)조(?:의(\d+))?$/);
+      if(m&&!/(시행령|고시|망법|정보통신망법|신용정보법)\s*$/.test(prev)){const a=document.createElement("a");a.className="law";a.href=lawHref(m[1],m[2]);a.target="_blank";a.rel="noopener";a.title="관계도에서 조문 보기";a.textContent=p;frag.appendChild(a);}
+      else frag.appendChild(document.createTextNode(p));
+      prev=p;});
+    n.parentNode.replaceChild(frag,n);
+  });
+}
+linkLaw(document.querySelector(".wrap"));
+
+// ===== 빈칸 / 탭 / 학습 모드 / 외웠음 (카드 보기) =====
+document.querySelectorAll(".bl").forEach(b=>b.setAttribute("aria-label","빈칸 열기"));
 document.addEventListener("click",e=>{
   const bl=e.target.closest(".bl");
-  if(bl){const open=bl.classList.toggle("open");bl.textContent=open?bl.dataset.a:"?";return;}
+  if(bl&&!document.body.classList.contains("study")){const open=bl.classList.toggle("open");bl.textContent=open?bl.dataset.a:"?";return;}
   const tab=e.target.closest(".tab");
-  if(tab){document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t===tab));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id==="v-"+tab.dataset.view));try{localStorage.setItem("cppg-memo-tab",tab.dataset.view)}catch(_){}}
+  if(tab){document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t===tab));document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on",v.id==="v-"+tab.dataset.view));ls.set("cppg-memo-tab",tab.dataset.view);}
 });
 $("#hideAll").onclick=()=>document.querySelectorAll(".bl").forEach(b=>{b.classList.remove("open");b.textContent="?"});
 $("#showAll").onclick=()=>document.querySelectorAll(".bl").forEach(b=>{b.classList.add("open");b.textContent=b.dataset.a});
-// 외웠음 체크 저장
-let done={};try{done=JSON.parse(localStorage.getItem("cppg-memo-done")||"{}")}catch(_){}
+function setStudy(on){
+  document.body.classList.toggle("study",on);$("#studyMode").setAttribute("aria-pressed",on);
+  document.querySelectorAll(".bl").forEach(b=>{if(on){b.classList.add("open");b.textContent=b.dataset.a;}else{b.classList.remove("open");b.textContent="?";}});
+  ls.set("cppg-memo-study",on);
+}
+$("#studyMode").onclick=()=>setStudy(!document.body.classList.contains("study"));
+function setOnlyLeft(on){document.body.classList.toggle("onlyleft",on);$("#onlyLeft").setAttribute("aria-pressed",on);ls.set("cppg-memo-onlyleft",on);}
+$("#onlyLeft").onclick=()=>setOnlyLeft(!document.body.classList.contains("onlyleft"));
+
+let done=ls.get("cppg-memo-done",{});
 const cards=document.querySelectorAll(".card[data-k]");$("#totalN").textContent=cards.length;
 function refresh(){let n=0;cards.forEach(c=>{const k=c.dataset.k,cb=c.querySelector(".memo input");cb.checked=!!done[k];c.classList.toggle("done",!!done[k]);if(done[k])n++;});$("#doneN").textContent=n;}
-cards.forEach(c=>c.querySelector(".memo input").addEventListener("change",e=>{done[c.dataset.k]=e.target.checked;try{localStorage.setItem("cppg-memo-done",JSON.stringify(done))}catch(_){}refresh();}));
+cards.forEach(c=>c.querySelector(".memo input").addEventListener("change",e=>{done[c.dataset.k]=e.target.checked;ls.set("cppg-memo-done",done);refresh();}));
 $("#resetDone").onclick=()=>{done={};try{localStorage.removeItem("cppg-memo-done")}catch(_){}refresh();};
 refresh();
-try{const t=localStorage.getItem("cppg-memo-tab");if(t){const b=document.querySelector(`.tab[data-view="${t}"]`);if(b)b.click();}}catch(_){}
+{const t=ls.get("cppg-memo-tab",null);if(t){const b=document.querySelector(`.tab[data-view="${t}"]`);if(b)b.click();}}
+if(ls.get("cppg-memo-study",false))setStudy(true);
+if(ls.get("cppg-memo-onlyleft",false))setOnlyLeft(true);
+
+// ===== 문제 항목 추출 (빈칸 1개 = 문항 1개) =====
+const ITEMS=[];
+cards.forEach(card=>{
+  const k=card.dataset.k,view=card.closest(".view").id.replace("v-",""),title=card.querySelector("h3").textContent;
+  const ref=(card.querySelector(".ref")||{}).textContent||"";
+  const exp=[...card.querySelectorAll(".story,.key")].map(e=>e.textContent.trim()).join(" ").slice(0,320);
+  const bls=[...card.querySelectorAll(".bl")];
+  bls.forEach((bl,i)=>{
+    const ctx=bl.closest("tr,li,.sent")||card;
+    ITEMS.push({id:`${k}-${i}`,k,view,title,ref,exp,a:bl.dataset.a,bl,ctx});
+  });
+});
+
+// ===== 간격 반복 (1·3·7·14·30일) =====
+const INT=[1,3,7,14,30];
+function srsLoad(key){return ls.get(key,{});}
+function srsGrade(store,id,ok){
+  const now=Date.now(),r=store[id]||{s:0,w:0,n:0};
+  r.n++;r.l=now;r.r=ok?1:0;
+  if(ok){r.d=now+INT[r.s]*DAY;r.s=Math.min(r.s+1,INT.length-1);}else{r.w++;r.s=0;r.d=now+1*DAY;}
+  store[id]=r;
+}
+function srsDue(store,ids){const now=Date.now();return ids.filter(id=>store[id]&&store[id].d<=now);}
+function srsBadge(store,id){
+  const r=store[id];if(!r)return{cls:"fresh",txt:"처음"};
+  const days=Math.max(0,Math.round((Date.now()-r.l)/DAY));const when=days===0?"오늘":`${days}일 전`;
+  return{cls:r.r?"right":"wrong",txt:`${when} ${r.r?"맞힘":"틀림"} · 복습 ${r.n}회차`};
+}
+function srsSession(store,ids,N,reviewOnly){
+  const now=Date.now();
+  const due=ids.filter(id=>store[id]&&store[id].d<=now);
+  const dueWrong=shuffle(due.filter(id=>store[id].r===0)),dueRight=shuffle(due.filter(id=>store[id].r===1));
+  const fresh=shuffle(ids.filter(id=>!store[id]));
+  const rest=shuffle(ids.filter(id=>store[id]&&store[id].d>now)).sort((a,b)=>store[a].d-store[b].d);
+  let picks=[];
+  // 1) 기한 된 오답은 최대 60%까지 우선
+  picks.push(...dueWrong.slice(0,Math.ceil(N*0.6)));
+  // 2) 기한 된 정답도 일부(최대 25%) 섞음
+  picks.push(...dueRight.slice(0,Math.max(1,Math.round(N*0.25))));
+  if(reviewOnly){for(const id of [...dueWrong,...dueRight]){if(picks.length>=N)break;if(!picks.includes(id))picks.push(id);}return shuffle(picks.slice(0,N));}
+  // 3) 새 항목으로 채움
+  for(const id of fresh){if(picks.length>=N)break;picks.push(id);}
+  // 4) 모자라면 남은 복습분 → 기한 안 된 것 순
+  for(const id of [...dueWrong,...dueRight,...rest]){if(picks.length>=N)break;if(!picks.includes(id))picks.push(id);}
+  return shuffle(picks.slice(0,N));
+}
+
+// ===== 문제풀이 모드 =====
+const QKEY="cppg-memo-srs";let qStore=srsLoad(QKEY),qSet=[],qi=0,qOk=0,qLog=[];
+const byItem=Object.fromEntries(ITEMS.map(it=>[it.id,it]));
+function updateDue(){const n=srsDue(qStore,ITEMS.map(i=>i.id)).length;$("#dueBadge").textContent=n?`· 복습 ${n}`:"";}
+function renderCtx(it){
+  const clone=it.ctx.cloneNode(true);
+  const origBls=[...it.ctx.querySelectorAll(".bl")],pos=origBls.indexOf(it.bl);
+  clone.querySelectorAll(".bl").forEach((b,i)=>{const s=document.createElement("span");if(i===pos){s.className="blank";s.textContent=it.a;}else{s.className="shown";s.textContent=b.dataset.a;}b.replaceWith(s);});
+  clone.querySelectorAll(".memo").forEach(m=>m.remove());
+  // 빈칸 문장: <br>로 나뉜 줄 중 정답이 있는 줄만 남김
+  if(clone.classList.contains("sent")){
+    const segs=[[]];[...clone.childNodes].forEach(n=>{if(n.nodeName==="BR")segs.push([]);else segs[segs.length-1].push(n);});
+    const hit=segs.find(seg=>seg.some(n=>n.nodeType===1&&(n.classList.contains("blank")||n.querySelector&&n.querySelector(".blank"))));
+    if(hit){clone.innerHTML="";hit.forEach(n=>clone.appendChild(n));}
+  }
+  let html;
+  if(clone.tagName==="TR"){const head=it.ctx.closest("table")?.querySelector("tr");const th=head&&head.querySelector("th")?head.outerHTML.replace(/<button[^>]*data-a="([^"]*)"[^>]*>\?<\/button>/g,"$1"):"";html=`<div class="tblbox"><table>${th}${clone.outerHTML}</table></div>`;}
+  else if(clone.tagName==="LI"){html=`<ol class="steps">${clone.outerHTML}</ol>`;}
+  else html=clone.outerHTML;
+  return html;
+}
+function qRender(){
+  const host=$("#qHost");
+  if(qi>=qSet.length){qEnd();return;}
+  const it=byItem[qSet[qi]],b=srsBadge(qStore,it.id);
+  host.innerHTML=`<div class="qcard">
+    <span class="badge ${b.cls}">${b.txt}</span>
+    <div class="from"><b>${it.title}</b> · ${it.ref||""}</div>
+    <div class="qctx">${renderCtx(it)}</div>
+    <div class="qans" id="qAns"><div class="a">${it.a}</div><div class="exp">${it.exp||"카드의 표·문장을 다시 떠올려 보기."}</div></div>
+    <div class="qact" id="qAct"><button class="btn show" id="qShow">정답 보기</button></div>
+  </div>`;
+  $("#qProg").textContent=`${qi} / ${qSet.length}`;$("#qOk").textContent=qOk;
+  $("#qShow").onclick=()=>{host.querySelector(".blank").classList.add("show");$("#qAns").classList.add("on");
+    $("#qAct").innerHTML=`<button class="btn ok" id="qYes">알았다 ○</button><button class="btn no" id="qNo">몰랐다 ✕</button>`;
+    $("#qYes").onclick=()=>qAnswer(it,true);$("#qNo").onclick=()=>qAnswer(it,false);};
+}
+function qAnswer(it,ok){srsGrade(qStore,it.id,ok);ls.set(QKEY,qStore);if(ok)qOk++;qLog.push({it,ok});qi++;updateDue();qRender();}
+function qEnd(){
+  const n=qSet.length,pct=n?Math.round(qOk/n*100):0;
+  const wrong=qLog.filter(x=>!x.ok);
+  const nextDue=srsDue(qStore,ITEMS.map(i=>i.id)).length;
+  $("#qHost").innerHTML=`<div class="qend"><div class="kicker">세션 끝</div><div class="big">${pct}%</div><div>${n}문항 중 ${qOk}문항 알았다</div>
+   ${wrong.length?`<table><tr><th>틀린 항목</th><th>정답</th><th>다시</th></tr>${wrong.map(x=>`<tr><td>${x.it.title}</td><td><b>${x.it.a}</b></td><td>내일</td></tr>`).join("")}</table>`:"<p>전부 알았다고 표시. 맞힌 항목은 1→3→7→14일 뒤 다시 나옴.</p>"}
+   <p class="srsnote">지금 복습 기한이 된 항목 ${nextDue}개. 내일 다시 열면 오늘 틀린 것부터 나옴.</p>
+   <div class="qact" style="margin-top:12px"><button class="btn show" id="qAgain">새 세션</button></div></div>`;
+  $("#qProg").textContent=`${n} / ${n}`;$("#qAgain").onclick=qStart;
+}
+function qStart(){
+  const N=parseInt($("#qN").value,10),scope=$("#qScope").value,ro=$("#qReviewOnly").checked;
+  const ids=ITEMS.filter(it=>scope==="all"||it.view===scope).map(it=>it.id);
+  qSet=srsSession(qStore,ids,N,ro);qi=0;qOk=0;qLog=[];
+  if(!qSet.length){$("#qHost").innerHTML=`<div class="qend"><p>${ro?"복습 기한이 된 항목이 없음. ‘복습분만’을 끄고 시작하거나 내일 다시.":"범위에 문항이 없음."}</p></div>`;return;}
+  qRender();
+}
+$("#qStart").onclick=qStart;
+updateDue();
+
+// ===== 숫자 드릴 (혼동 쌍 2지선다) =====
+const PAIRS=[
+ ["유출등 정보주체 통지 기한","72시간","24시간","제34조·시행령 제39조"],
+ ["연락처 모를 때 홈페이지 게시로 통지 갈음","30일 이상","7일 이상","시행령 제39조 제3항"],
+ ["열람·정정·삭제·처리정지 조치 기한","10일","30일","시행령 제41조~44"],
+ ["자동화 결정 거부·설명 조치 기한","30일","10일","시행령 제44조의3"],
+ ["국외이전 중지명령 이의제기","7일","15일","제28조의9"],
+ ["분쟁조정안 수락 여부 통지","15일","30일","제47조 제3항"],
+ ["분쟁조정 심사·조정안 작성","60일","30일","제44조"],
+ ["집단분쟁조정 공고 기간","14일 이상","7일 이상","제49조"],
+ ["집단분쟁조정 정보주체 수","50명 이상","100명 이상","시행령 제52조"],
+ ["보호위원회 위원 수","9명","30명","제7조의2"],
+ ["분쟁조정위원회 위원 수","30명 이내","9명","제40조"],
+ ["보호위원회 위원 임기","3년","2년","제7조의4"],
+ ["분쟁조정위원회 위원 임기","2년","3년","제40조"],
+ ["기본계획 수립 주기","3년","5년","제9조"],
+ ["공공기관 개인정보파일 등록 기한","60일","30일","시행령 제34조"],
+ ["대규모 처리자 수집출처 통지 기한","3개월","6개월","시행령 제15조의2"],
+ ["영향평가 대상: 민감·고유식별","5만명","10만명","시행령 제35조"],
+ ["영향평가 대상: 연계","50만명","100만명","시행령 제35조"],
+ ["유출 신고 대상 인원","1천명","1만명","시행령 제40조"],
+ ["인터넷망 차단 대상 일일평균 이용자","100만명","10만명","시행령 제30조 제1항 제3호"],
+ ["접속기록 기본 보관","1년","2년","고시 제8조"],
+ ["접속기록 점검 주기","월 1회","분기 1회","고시 제8조"],
+ ["과징금 일반 상한(전체 매출)","3%","10%","제64조의2 제1항"],
+ ["과징금 산정 곤란 시 일반 상한","20억원","50억원","제64조의2 제1항"],
+ ["징벌적 손해배상 배수","5배","3배","제39조 제3항"],
+ ["법정손해배상 상한","300만원","500만원","제39조의2"],
+ ["손해배상 보장(보험) 매출 기준","10억원","1조원","시행령 제48조의7"],
+ ["국내대리인 지정 매출 기준","1조원","1,800억원","시행령 제32조의3"],
+ ["ISMS-P 인증 유효기간","3년","1년","제32조의2"],
+ ["가명정보 처리 기록 보관(파기 후)","3년","1년","제28조의4"],
+ ["아동 기준 연령","만 14세 미만","만 16세 미만","제22조의2"],
+ ["제70조 위반 법인 양벌 벌금","7천만원","1억원","제74조"],
+ ["과태료 최고 금액","5천만원","3천만원","제75조 제1항"],
+ ["CPO 지정·변경 보호위 신고 기한","6개월","3개월","시행령 제32조 제4항"],
+ ["과징금 미납 가산금","연 6%","연 3%","제64조의2 제9항"],
+ ["재해·재난 대비 조치 대상 처리자","10만명 이상","100만명 이상","고시 제11조"],
+ ["접근권한 부여·변경·말소 기록 보관","3년","1년","고시 제5조"],
+ ["결합전문기관 지정 유효기간","3년","5년","시행령 제29조의2"],
+];
+let dSet=[],di=0,dOk=0,dTimer=null;
+function dStart(){dSet=shuffle([...PAIRS]).slice(0,20);di=0;dOk=0;dRender();}
+function dRender(){
+  clearInterval(dTimer);const host=$("#dHost");
+  if(di>=dSet.length){host.innerHTML=`<div class="qend"><div class="kicker">드릴 끝</div><div class="big">${dOk} / ${dSet.length}</div><p>틀린 쌍은 카드 보기 ‘숫자·기준’ 탭에서 표로 다시 확인.</p><div class="qact" style="margin-top:12px"><button class="btn show" id="dAgain">다시</button></div></div>`;$("#dAgain").onclick=dStart;$("#dProg").textContent=`${dSet.length} / ${dSet.length}`;return;}
+  const [q,a,b,ref]=dSet[di];const left=Math.random()<.5;
+  host.innerHTML=`<p class="q">${q}</p><div class="timer"><i id="dBar"></i></div><div class="two"><button data-v="${left?a:b}">${left?a:b}</button><button data-v="${left?b:a}">${left?b:a}</button></div><div class="hint" id="dHint"></div>`;
+  $("#dProg").textContent=`${di} / ${dSet.length}`;$("#dOk").textContent=dOk;
+  let t=10;const bar=$("#dBar");requestAnimationFrame(()=>bar.style.width="0%");
+  bar.style.transition="width 10s linear";
+  dTimer=setTimeout(()=>dPick(null,a,ref),10000);
+  host.querySelectorAll(".two button").forEach(btn=>btn.onclick=()=>dPick(btn,a,ref));
+}
+function dPick(btn,a,ref){
+  clearTimeout(dTimer);const host=$("#dHost");
+  host.querySelectorAll(".two button").forEach(x=>{x.disabled=true;if(x.dataset.v===a)x.classList.add("right");else if(x===btn)x.classList.add("wrong");});
+  const ok=btn&&btn.dataset.v===a;if(ok)dOk++;
+  $("#dHint").innerHTML=`${ok?"맞음":btn?"틀림":"시간 초과"} · 정답 <b>${a}</b> · ${ref}`;
+  linkLaw($("#dHint"));
+  di++;setTimeout(dRender,ok?700:1500);
+}
+$("#dStart").onclick=dStart;
+
+// ===== 모드 전환 (모바일은 문제풀이 기본) =====
+const isMobile=matchMedia("(max-width:760px)").matches;
+function setMode(m){
+  document.querySelectorAll(".mode").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===m));
+  $("#p-cards").classList.toggle("on",m==="cards");$("#p-quiz").classList.toggle("on",m==="quiz");$("#p-drill").classList.toggle("on",m==="drill");
+  ls.set("cppg-memo-mode",m);
+  if(m==="quiz"&&!qSet.length)qStart();
+  if(m==="drill"&&!dSet.length)dStart();
+}
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+$("#forceCards").onclick=()=>setMode("cards");
+{let m=ls.get("cppg-memo-mode",null);if(isMobile&&(!m||m==="cards"))m="quiz";setMode(m||"cards");}
 </script>
 
 <script>

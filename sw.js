@@ -1,6 +1,6 @@
 // CPPG 스터디 service worker — 앱 셸은 미리 캐시, 폰트는 런타임 캐시
-const VERSION = 'cppg-v2';
-const SHELL = ['/', '/index.html', '/map', '/map.html', '/quiz', '/quiz.html', '/memo', '/memo.html', '/guide', '/guide.html',
+const VERSION = 'cppg-v3';
+const SHELL = ['/', '/index.html', '/map', '/map.html', '/law', '/law.html', '/quiz', '/quiz.html', '/memo', '/memo.html', '/guide', '/guide.html',
   '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/maskable-512.png', '/icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

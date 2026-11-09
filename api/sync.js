@@ -8,6 +8,11 @@ const crypto = require("crypto");
 const URL_ = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
 const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 const KEYS = new Set(["marks", "memo", "quiz", "view"]);
+// 허용 아이디: api/users.json 의 목록 + 환경변수 CPPG_USERS("a,b,c"). 목록에 없는 아이디는 새로 등록할 수 없음.
+let FILE_USERS = [];
+try { FILE_USERS = require("./users.json").users || []; } catch (_) {}
+const ALLOW = new Set([...FILE_USERS, ...String(process.env.CPPG_USERS || "").split(",")].map(x => String(x).trim().toLowerCase()).filter(Boolean));
+const allowed = u => ALLOW.size === 0 ? false : ALLOW.has(u);
 const MAX = 400 * 1024; // 400KB per key
 
 async function redis(cmd) {
@@ -42,6 +47,7 @@ module.exports = async (req, res) => {
     if (!u) return res.status(400).json({ ok: false, error: "아이디 없음" });
     if (pin.length < 4) return res.status(400).json({ ok: false, error: "PIN은 4자리 이상" });
     const stored = await redis(["GET", `u:${u}:pin`]);
+    if (!stored && !allowed(u)) return res.status(403).json({ ok: false, error: "등록되지 않은 아이디입니다. 관리자에게 아이디 등록을 요청하세요." });
     if (req.method === "POST" && body.op === "check") {
       return res.json({ ok: true, exists: !!stored, pinOk: !stored || stored === hash(u, pin) });
     }

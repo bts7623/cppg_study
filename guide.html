@@ -177,7 +177,7 @@ th{background:var(--bg);font-weight:600;font-size:13px}
 
 <h2>자주 묻는 것</h2>
 <div class="faq">
-  <details><summary>형광펜을 폰·PC에서 이어서 쓰고 싶어요 (아이디 동기화)</summary><p>cppgstudy.vercel.app에서 상단 메뉴 오른쪽 끝 <span class="ui">아이디</span>를 누르고 아이디와 PIN(4자리 이상)을 정하면, 조문 찾기·관계도의 형광펜·★ 표시가 서버에 저장되어 어느 기기에서 열어도 이어진다. 다른 기기에서는 같은 아이디·PIN으로 연결하면 된다. 주소 뒤에 <code>?u=아이디</code>를 붙여 열면 아이디가 미리 채워진다. 함께 공부하는 사람은 각자 다른 아이디를 쓰면 서로 섞이지 않는다. 처음 쓰는 아이디는 그때 입력한 PIN으로 등록되고, PIN이 틀리면 저장되지 않는다. 암기노트·연습문제의 체크·오답 기록은 아직 기기별 저장이다.</p></details>
+  <details><summary>형광펜을 폰·PC에서 이어서 쓰고 싶어요 (아이디 동기화)</summary><p>cppgstudy.vercel.app에서 상단 메뉴 오른쪽 끝 <span class="ui">아이디</span>를 누르고 아이디와 PIN(4자리 이상)을 정하면, 조문 찾기·관계도의 형광펜·★ 표시가 서버에 저장되어 어느 기기에서 열어도 이어진다. 다른 기기에서는 같은 아이디·PIN으로 연결하면 된다. 주소 뒤에 <code>?u=아이디</code>를 붙여 열면 아이디가 미리 채워진다. 아이디는 관리자(사이트 운영자)가 미리 등록한 것만 연결할 수 있고, 처음 연결할 때 입력한 PIN이 그 아이디의 PIN이 된다. 함께 공부하는 사람은 각자 받은 아이디를 쓰면 서로 섞이지 않고, PIN이 틀리면 저장되지 않는다. 암기노트·연습문제의 체크·오답 기록은 아직 기기별 저장이다.</p></details>
   <details><summary>체크·오답 기록이 사라졌어요</summary><p>암기노트·연습문제 기록은 서버가 아니라 그 브라우저에만 저장된다. 다른 기기·다른 브라우저·시크릿 창에서는 처음부터 시작하고, 브라우저 데이터를 지우면 함께 지워진다. 한 기기 한 브라우저로 꾸준히 쓰는 것이 좋다. (형광펜은 위 ‘아이디 동기화’로 이어진다.)</p></details>
   <details><summary>다른 사람에게 보여주고 싶어요</summary><p>각 페이지는 만든 사람 계정에서 공유 설정을 해야 다른 사람이 열 수 있다. 페이지 오른쪽 위 공유 메뉴에서 링크 공개 또는 이메일 초대를 선택하면 된다. 공유받은 사람의 체크·오답은 그 사람 브라우저에 따로 저장되어 서로 섞이지 않는다.</p></details>
   <details><summary>어느 법령 기준인가요</summary><p>개인정보 보호법 법률 제21445호(2026.3.10 개정, 2026.9.11 시행), 시행령 2026.9.10 개정, 개인정보의 안전성 확보조치 기준 고시. 정보통신망법은 2026.10.2 시행분. 숫자가 교재와 다르면 교재의 기준 시점을 먼저 확인할 것.</p></details>
@@ -194,7 +194,7 @@ th{background:var(--bg);font-weight:600;font-size:13px}
   <div class="syncbox">
     <button class="sx" data-sync-close aria-label="닫기">×</button>
     <h3>내 아이디로 이어서 공부</h3>
-    <p>아이디와 PIN을 정하면 형광펜·★ 표시가 서버에 저장돼서 폰·PC 어디서 열어도 이어집니다. 처음 쓰는 아이디는 지금 입력한 PIN으로 등록됩니다. 친구와 공유하려면 각자 다른 아이디를 쓰세요.</p>
+    <p>아이디와 PIN을 정하면 형광펜·★ 표시가 서버에 저장돼서 폰·PC 어디서 열어도 이어집니다. 아이디는 관리자가 미리 등록한 것만 쓸 수 있고, 처음 연결할 때 입력한 PIN이 그 아이디의 PIN으로 정해집니다. 함께 공부하는 사람은 각자 받은 아이디로 연결하세요.</p>
     <label>아이디 <input id="sy-u" type="text" autocomplete="username" placeholder="예: bts" maxlength="32"></label>
     <label>PIN <input id="sy-p" type="password" inputmode="numeric" autocomplete="current-password" placeholder="4자리 이상" maxlength="32"></label>
     <div class="syrow"><button class="btn" id="sy-go">연결</button><button class="btn" id="sy-out" hidden>이 기기에서 해제</button><span class="symsg" id="sy-msg"></span></div>

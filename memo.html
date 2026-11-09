@@ -957,7 +957,7 @@ $("#forceCards").onclick=()=>setMode("cards");
       const j=await api("GET",null,{u:user.u,k:"marks"});
       const local=g(LS_MARKS,{}); const merged=merge(j.data,local);
       if(!same(merged,local)){s(LS_MARKS,merged);if(window.LAWUI)LAWUI.reload();document.dispatchEvent(new CustomEvent("cppg-marks-synced"));}
-      if(!same(merged,j.data))await push(); else paint("","동기화됨");
+      if(!j.exists||!same(merged,j.data))await push(); else paint("","동기화됨");
     }catch(e){paint("err","불러오기 실패: "+e.message);}
   }
   document.getElementById("sy-go").onclick=async()=>{
@@ -969,7 +969,8 @@ $("#forceCards").onclick=()=>setMode("cards");
       const c=await api("POST",{u,pin,op:"check"});
       if(!c.pinOk){MSG.textContent="PIN이 맞지 않습니다";MSG.className="symsg err";return;}
       user={u,pin};s(LS_USER,user);paint();
-      MSG.textContent=c.exists?"연결됨 · 서버 표시를 불러옵니다":"새 아이디 등록됨 · 이 기기의 표시를 올립니다";
+      MSG.textContent=c.exists?"연결됨 · 서버 표시를 불러옵니다":"새 아이디 등록 중 · 이 PIN이 아이디의 PIN이 됩니다";
+      if(!c.exists)await push();
       await pull(); setTimeout(closeBar,700);
     }catch(e){MSG.textContent="오류: "+e.message;MSG.className="symsg err";}
   };

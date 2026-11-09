@@ -585,6 +585,107 @@ $("#finish").onclick=()=>{
 };
 initSide();
 </script>
+<div class="syncbar" id="syncbar" hidden>
+  <div class="syncbox">
+    <button class="sx" data-sync-close aria-label="닫기">×</button>
+    <h3>내 아이디로 이어서 공부</h3>
+    <p>아이디와 PIN을 정하면 형광펜·★ 표시가 서버에 저장돼서 폰·PC 어디서 열어도 이어집니다. 처음 쓰는 아이디는 지금 입력한 PIN으로 등록됩니다. 친구와 공유하려면 각자 다른 아이디를 쓰세요.</p>
+    <label>아이디 <input id="sy-u" type="text" autocomplete="username" placeholder="예: bts" maxlength="32"></label>
+    <label>PIN <input id="sy-p" type="password" inputmode="numeric" autocomplete="current-password" placeholder="4자리 이상" maxlength="32"></label>
+    <div class="syrow"><button class="btn" id="sy-go">연결</button><button class="btn" id="sy-out" hidden>이 기기에서 해제</button><span class="symsg" id="sy-msg"></span></div>
+    <p class="syhint">주소 뒤에 <code>?u=아이디</code>를 붙여 열면 아이디가 미리 채워집니다. 서버에는 아이디·PIN 해시·표시 데이터만 저장되고 다른 개인정보는 없습니다.</p>
+  </div>
+</div>
+<style>
+.appnav .syncbtn{margin-left:4px;border:1px solid var(--line);background:var(--paper);color:var(--muted);font:inherit;font-size:12.5px;padding:5px 10px;border-radius:999px;cursor:pointer;white-space:nowrap;display:inline-flex;gap:5px;align-items:center}
+.appnav .syncbtn .dot{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.appnav .syncbtn.on{color:var(--fg);border-color:var(--accent)}
+.appnav .syncbtn.on .dot{background:#2f8a4c}
+.appnav .syncbtn.busy .dot{background:var(--star)}
+.appnav .syncbtn.err .dot{background:var(--c11,#c0553d)}
+.syncbar{position:fixed;inset:0;background:rgba(10,12,20,.5);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px}
+.syncbox{position:relative;background:var(--paper);color:var(--fg);border-radius:14px;padding:18px 18px 16px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);font-family:var(--font-body);font-size:14px}
+.syncbox h3{margin:0 0 6px;font-family:var(--font-display);font-size:18px}
+.syncbox p{margin:0 0 10px;color:var(--muted);font-size:13px;line-height:1.5}
+.syncbox label{display:flex;align-items:center;gap:10px;margin:8px 0;font-weight:600;font-size:13px}
+.syncbox input{flex:1;font:inherit;font-size:15px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
+.syncbox .btn{font:inherit;font-size:13px;background:var(--accent);color:#fff;border:1px solid var(--accent);padding:8px 14px;border-radius:8px;cursor:pointer}
+.syncbox #sy-out{background:var(--paper);color:var(--fg);border-color:var(--line)}
+.syrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.symsg{font-size:12.5px;color:var(--muted)}
+.symsg.err{color:var(--c11,#c0553d)}
+.syhint{font-size:12px!important;margin-top:12px!important}
+.syhint code{background:var(--bg);padding:1px 5px;border-radius:4px}
+.sx{position:absolute;top:8px;right:10px;background:none;border:0;font-size:20px;color:var(--muted);cursor:pointer}
+</style>
+<script>
+/* ===== 아이디 동기화 (Vercel /api/sync + Upstash Redis). 같은 출처 PWA 페이지에서만 동작 ===== */
+(function(){
+  const LS_USER="cppg-user", LS_MARKS="cppg-law-marks", LS_VER="cppg-law-marks-ver";
+  const g=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(_){return d}};
+  const s=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
+  let user=g(LS_USER,null); // {u,pin}
+  const qs=new URLSearchParams(location.search); const qu=(qs.get("u")||"").trim();
+  const nav=document.querySelector(".appnav");
+  const btn=document.createElement("button"); btn.className="syncbtn"; btn.type="button"; btn.title="아이디로 형광펜 동기화";
+  function paint(state,msg){btn.className="syncbtn"+(user?" on":"")+(state?" "+state:"");btn.innerHTML=`<span class="dot"></span>${user?user.u:"아이디"}`;if(msg)btn.title=msg;}
+  paint(); if(nav)nav.appendChild(btn);
+  const bar=document.getElementById("syncbar"), U=document.getElementById("sy-u"), P=document.getElementById("sy-p"), MSG=document.getElementById("sy-msg"), OUT=document.getElementById("sy-out");
+  function openBar(){bar.hidden=false;U.value=user?user.u:(qu||"");P.value="";MSG.textContent=user?"연결됨 · 다른 아이디로 바꾸려면 입력 후 연결":"";MSG.className="symsg";OUT.hidden=!user;(user?P:U).focus();}
+  function closeBar(){bar.hidden=true;}
+  btn.onclick=openBar; bar.addEventListener("click",e=>{if(e.target===bar||e.target.closest("[data-sync-close]"))closeBar();});
+  // ---- 병합: 서버 ∪ 로컬 (단어·★ 단위 합집합, 로컬 우선)
+  function merge(remote,local){
+    const out=JSON.parse(JSON.stringify(remote||{}));
+    for(const id in (local||{})){out[id]=out[id]||{};for(const pid in local[id]){const L=local[id][pid],R=out[id][pid]||{};const m={};const w=Object.assign({},R.w||{},L.w||{});if(Object.keys(w).length)m.w=w;if(L.s||R.s)m.s=1;out[id][pid]=m;}}
+    return out;
+  }
+  const same=(a,b)=>JSON.stringify(a||{})===JSON.stringify(b||{});
+  async function api(method,body,query){
+    const r=await fetch("/api/sync"+(query?"?"+new URLSearchParams(query):""),{method,headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
+    const j=await r.json().catch(()=>({ok:false,error:"응답 오류"}));if(!r.ok||!j.ok)throw new Error(j.error||("HTTP "+r.status));return j;
+  }
+  let timer=null, pushing=false, dirty=false;
+  async function push(){
+    if(!user)return; if(pushing){dirty=true;return;}
+    pushing=true;paint("busy");
+    try{const j=await api("PUT",{u:user.u,pin:user.pin,k:"marks",data:g(LS_MARKS,{})});s(LS_VER,j.ver);paint("", "저장됨 "+new Date(j.ver).toLocaleTimeString());}
+    catch(e){paint("err","저장 실패: "+e.message);}
+    pushing=false; if(dirty){dirty=false;schedule();}
+  }
+  function schedule(){clearTimeout(timer);timer=setTimeout(push,1500);}
+  async function pull(){
+    if(!user)return; paint("busy");
+    try{
+      const j=await api("GET",null,{u:user.u,k:"marks"});
+      const local=g(LS_MARKS,{}); const merged=merge(j.data,local);
+      if(!same(merged,local)){s(LS_MARKS,merged);if(window.LAWUI)LAWUI.reload();document.dispatchEvent(new CustomEvent("cppg-marks-synced"));}
+      if(!same(merged,j.data))await push(); else paint("","동기화됨");
+    }catch(e){paint("err","불러오기 실패: "+e.message);}
+  }
+  document.getElementById("sy-go").onclick=async()=>{
+    const u=U.value.trim().toLowerCase(), pin=P.value.trim();
+    if(!u){MSG.textContent="아이디를 입력하세요";MSG.className="symsg err";return;}
+    if(pin.length<4){MSG.textContent="PIN은 4자리 이상";MSG.className="symsg err";return;}
+    MSG.textContent="확인 중…";MSG.className="symsg";
+    try{
+      const c=await api("POST",{u,pin,op:"check"});
+      if(!c.pinOk){MSG.textContent="PIN이 맞지 않습니다";MSG.className="symsg err";return;}
+      user={u,pin};s(LS_USER,user);paint();
+      MSG.textContent=c.exists?"연결됨 · 서버 표시를 불러옵니다":"새 아이디 등록됨 · 이 기기의 표시를 올립니다";
+      await pull(); setTimeout(closeBar,700);
+    }catch(e){MSG.textContent="오류: "+e.message;MSG.className="symsg err";}
+  };
+  OUT.onclick=()=>{user=null;try{localStorage.removeItem(LS_USER)}catch(_){}paint();closeBar();};
+  // 표시가 바뀔 때마다 서버로 (LAWUI가 쏘는 이벤트)
+  document.addEventListener("cppg-marks-changed",()=>{if(user)schedule();});
+  window.addEventListener("storage",e=>{if(e.key===LS_MARKS&&user)schedule();});
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&user)pull();});
+  // 시작: ?u= 로 들어왔고 아직 연결 전이면 입력창 열기
+  if(user){pull();}else if(qu){setTimeout(openBar,300);}
+  window.CPPG_SYNC={pull,push,get user(){return user}};
+})();
+</script>
 
 <script>
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}

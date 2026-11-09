@@ -19,14 +19,15 @@
 :root{
   --bg:#f6f5f2; --paper:#ffffff; --fg:#1f2430; --muted:#5e6676; --line:#dcd9d2; --accent:#2f4b8f; --accent-soft:#e6ebf7;
   --c1:#6b5bd2; --c2:#2a7f8e; --c3:#2f8a4c; --c4:#b7791f; --c5:#c0553d; --c6:#8b3a62; --c7:#1f6f9e; --c8:#5c7a2b; --c9:#7a5c3a; --c10:#4a4f5c; --c11:#9a2f2f;
+  --hl1:#fff176; --hl2:#f8bbd0; --hl3:#b3e5fc; --star:#e0a200;
   --font-display:"Gowun Batang","Noto Serif KR",serif; --font-body:"IBM Plex Sans KR","Noto Sans KR",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#161922; --paper:#1f2330; --fg:#e8e9ee; --muted:#a3a9b8; --line:#333948; --accent:#8ea4e6; --accent-soft:#273252;
-  --c1:#9d8ff0; --c2:#5fc2d2; --c3:#6ec68a; --c4:#e2b35b; --c5:#ea8a73; --c6:#d27aa6; --c7:#63b2e0; --c8:#a2c25c; --c9:#c39a6b; --c10:#9aa1b3; --c11:#e07373; color-scheme:dark}}
+  --c1:#9d8ff0; --c2:#5fc2d2; --c3:#6ec68a; --c4:#e2b35b; --c5:#ea8a73; --c6:#d27aa6; --c7:#63b2e0; --c8:#a2c25c; --c9:#c39a6b; --c10:#9aa1b3; --c11:#e07373; --hl1:#8a7a12; --hl2:#8c3a57; --hl3:#2b5f7a; --star:#f2c94c; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#161922; --paper:#1f2330; --fg:#e8e9ee; --muted:#a3a9b8; --line:#333948; --accent:#8ea4e6; --accent-soft:#273252;
-  --c1:#9d8ff0; --c2:#5fc2d2; --c3:#6ec68a; --c4:#e2b35b; --c5:#ea8a73; --c6:#d27aa6; --c7:#63b2e0; --c8:#a2c25c; --c9:#c39a6b; --c10:#9aa1b3; --c11:#e07373; color-scheme:dark}
+  --c1:#9d8ff0; --c2:#5fc2d2; --c3:#6ec68a; --c4:#e2b35b; --c5:#ea8a73; --c6:#d27aa6; --c7:#63b2e0; --c8:#a2c25c; --c9:#c39a6b; --c10:#9aa1b3; --c11:#e07373; --hl1:#8a7a12; --hl2:#8c3a57; --hl3:#2b5f7a; --star:#f2c94c; color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:1.55;font-size:15px}
 .wrap{max-width:1180px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -136,6 +137,28 @@ th{background:var(--bg);font-weight:600}
 .subj b{display:block;font-size:14px;margin-bottom:3px}
 .subj .pct{color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* 팝업 원문 보기 */
+.meta .seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--paper);margin-left:auto}
+.meta .seg button{font:inherit;font-size:12px;font-weight:600;padding:4px 10px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.meta .seg button.on{background:var(--accent);color:#fff}
+/* 원문 공통 UI (조문 찾기·관계도 공유) */
+.full{font-size:14.5px;line-height:1.75;font-family:var(--font-body);user-select:none;-webkit-user-select:none}
+.full .pt{margin:4px 0;padding-left:var(--ind,0px);text-indent:0}
+.full .pt.l1{--ind:14px}.full .pt.l2{--ind:30px}.full .pt.l3{--ind:46px}
+.full .pt.f{font-size:12.5px;color:var(--muted);margin-top:8px;padding-left:0}
+.full .pt.f .w{white-space:pre-line}
+.full .mk{font-weight:700;color:var(--cc);margin-right:2px;cursor:pointer}
+.full .mk.star::before{content:"★";color:var(--star);margin-right:3px;font-size:13px}
+.full .w{border-radius:3px;padding:0 1px;-webkit-tap-highlight-color:transparent;cursor:pointer}
+.full .w.c1{background:var(--hl1)}.full .w.c2{background:var(--hl2)}.full .w.c3{background:var(--hl3)}
+.full .amd-d{color:var(--muted);font-size:.9em}
+.full .xref{color:var(--accent);text-decoration:underline dotted;cursor:pointer}
+@media (hover:hover){.full .w:hover{outline:1px dashed var(--line)}}
+
+#panel .full{font-size:14px}
+#panel .full .pt.l1{--ind:14px}
+#panel h3.fh{font-family:var(--font-display);font-size:15px;text-transform:none;letter-spacing:0;margin-top:16px}
+#panel a.lnk{text-decoration:none;display:inline-block}
 </style>
 </head>
 <body>
@@ -438,19 +461,85 @@ function renderChapters(){
 // ===== 요지/원문 보기 (조문 찾기 페이지와 같은 설정값 공유) =====
 let popView=(()=>{try{return JSON.parse(localStorage.getItem("cppg-law-view"))==="full"?"full":"sum"}catch(_){return "sum"}})();
 function setPopView(v){popView=v;try{localStorage.setItem("cppg-law-view",JSON.stringify(v))}catch(_){}}
-const CIRC="①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳";
-const escH=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+// ===== 원문 공통 UI (조문 찾기·관계도 공유) : 렌더 + 형광펜/별표 즉시 저장 =====
+const LAWUI=(()=>{
+  const CIRC="①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳";
+  const KEY="cppg-law-marks";
+  const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(_){return d}};
+  const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}};
+  let marks=lsGet(KEY,{});
+  const reload=()=>{marks=lsGet(KEY,{})};
+  const save=()=>lsSet(KEY,marks);
+  const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  function markOf(id,pid){return (marks[id]||{})[pid]||{}}
+  function prune(id,pid){const m=marks[id]&&marks[id][pid];if(m&&!m.s&&(!m.w||!Object.keys(m.w).length)){delete marks[id][pid];}if(marks[id]&&!Object.keys(marks[id]).length)delete marks[id];}
+  function setWord(id,pid,i,c){marks[id]=marks[id]||{};const m=marks[id][pid]=marks[id][pid]||{};m.w=m.w||{};if(c)m.w[i]=c;else delete m.w[i];if(!Object.keys(m.w).length)delete m.w;prune(id,pid);save();}
+  function toggleStar(id,pid){marks[id]=marks[id]||{};const m=marks[id][pid]=marks[id][pid]||{};if(m.s)delete m.s;else m.s=1;prune(id,pid);save();return !!(marks[id]&&marks[id][pid]&&marks[id][pid].s);}
+  function clear(id){delete marks[id];save();}
+  function count(id){const m=marks[id]||{};let n=0;for(const p in m){n+=(m[p].s?1:0)+Object.keys(m[p].w||{}).length}return n}
+  function levelOf(code,text){if(code==="F")return "f";if(code==="M")return "l3";if(code==="N")return "l2";if(code==="P"||(code==="H"&&CIRC.includes(text[0])))return "l1";return "l0";}
+  function isMarker(code,text,tok0){if(code==="F")return false;if(tok0.length===1&&CIRC.includes(tok0[0]))return true;if(code==="N"&&/^\d+(의\d+)?\.$/.test(tok0))return true;if(code==="M"&&/^[가-힣]\.$/.test(tok0))return true;if(code==="H"&&/^제\d+조/.test(tok0))return true;return false;}
+  // 제N조(의M) → 조문 열기 링크. 「다른 법률」 제N조, 같은 법 제N조 는 제외. has(id)로 존재 확인
+  function linkify(html,selfId,has){
+    return html.replace(/(「[^」]*」\s*|같은 법\s*|법률\s*)?제(\d+)조(?:의(\d+))?/g,(m,pre,n,s)=>{
+      if(pre)return m;const id=`a${n}${s?"_"+s:""}`;if(!has(id)||id===selfId)return m;
+      return `<a class="xref" data-art="${id}" data-id="${id}">${m}</a>`;});
+  }
+  function renderPart(id,pid,code,text,has){
+    const m=markOf(id,pid);const w=m.w||{};
+    const toks=text.split(/ +/);let out=[];let inAmd=false;
+    toks.forEach((t,i)=>{
+      const star=i===0&&isMarker(code,text,t);
+      if(t.startsWith("<"))inAmd=true;
+      const cls=["w",w[i]?"c"+w[i]:"",star?"mk":"",star&&m.s?"star":"",inAmd?"amd-d":""].filter(Boolean).join(" ");
+      if(t.endsWith(">"))inAmd=false;
+      out.push(`<span class="${cls}" data-p="${pid}" data-i="${i}">${esc(t)}</span>`);
+    });
+    let html=out.join(" ");
+    if(code!=="F")html=linkify(html,id,has);
+    return `<div class="pt ${levelOf(code,text)}">${html}</div>`;
+  }
+  // parts:[[code,text]...], prefix: 부분 id 접두(시행령 등). 반환: <div class="full" data-art=id>…</div>
+  function renderParts(id,parts,prefix,has){
+    has=has||(k=>typeof FULL!=="undefined"&&!!FULL[k]);
+    reload();
+    return `<div class="full" data-art="${id}">${parts.map(([c,t],i)=>renderPart(id,(prefix||"")+i,c,t,has)).join("")}</div>`;
+  }
+  let onChange=null;
+  function apply(w,id){ // 단어 탭: 형광펜 ON/OFF (즉시 저장)
+    const pid=w.dataset.p,i=+w.dataset.i;
+    if(w.classList.contains("mk")){const on=toggleStar(id,pid);w.classList.toggle("star",on);}
+    else{const cur=w.classList.contains("c1")?1:w.classList.contains("c2")?2:w.classList.contains("c3")?3:0;const next=cur?0:1;setWord(id,pid,i,next);w.classList.remove("c1","c2","c3");if(next)w.classList.add("c"+next);}
+    if(onChange)onChange(id);
+  }
+  function cycle(w,id){ // 길게 누르기: 노랑→분홍→파랑→해제
+    const pid=w.dataset.p,i=+w.dataset.i;
+    if(w.classList.contains("mk")){apply(w,id);return;}
+    const cur=w.classList.contains("c1")?1:w.classList.contains("c2")?2:w.classList.contains("c3")?3:0;const next=(cur+1)%4;
+    setWord(id,pid,i,next);w.classList.remove("c1","c2","c3");if(next)w.classList.add("c"+next);if(onChange)onChange(id);
+  }
+  let suppress=false,timer=null;
+  document.addEventListener("click",e=>{
+    if(suppress){suppress=false;e.preventDefault();e.stopPropagation();return;}
+    if(e.target.closest(".xref"))return;
+    const w=e.target.closest(".full .w");if(!w)return;
+    const full=w.closest(".full");apply(w,full.dataset.art);
+  },true);
+  document.addEventListener("pointerdown",e=>{const w=e.target.closest(".full .w");if(!w||e.target.closest(".xref"))return;clearTimeout(timer);
+    timer=setTimeout(()=>{suppress=true;if(navigator.vibrate)try{navigator.vibrate(15)}catch(_){}
+      cycle(w,w.closest(".full").dataset.art);setTimeout(()=>{suppress=false},600);},500);});
+  ["pointerup","pointercancel","pointerleave","scroll"].forEach(ev=>document.addEventListener(ev,()=>clearTimeout(timer),{passive:true}));
+  document.addEventListener("contextmenu",e=>{if(e.target.closest(".full .w"))e.preventDefault();});
+  window.addEventListener("storage",e=>{if(e.key===KEY)reload();});
+  return {renderParts,count,clear,reload,markOf,setOnChange(f){onChange=f},CIRC,esc};
+})();
+
+const escH=LAWUI.esc;
 function coveredIds(a){ // 요지 카드 하나가 여러 조문을 묶은 경우(제7조~제7조의14 등) 원문은 모두
   if(typeof FULL==="undefined")return [];
   const ids=[a.id,...Object.keys(ALIAS).filter(k=>ALIAS[k]===a.id)].filter(k=>FULL[k]);
   const key=k=>{const m=k.match(/^a(\d+)(?:_(\d+))?$/);return m?(+m[1])*1000+(+(m[2]||0)):1e9};
   return [...new Set(ids)].sort((x,y)=>key(x)-key(y));
-}
-function renderFullParts(parts){
-  return parts.map(([c,t])=>{const lv=c==="F"?"f":c==="M"?"l3":c==="N"?"l2":(c==="P"||(c==="H"&&CIRC.includes(t[0])))?"l1":"l0";
-    let h=escH(t).replace(/(&lt;(?:개정|신설|전문개정|제목개정)[^&]*?&gt;)/g,'<span class="amd-d">$1</span>').replace(/\n/g,"<br>");
-    h=h.replace(/^([①-⑳]|\d+(?:의\d+)?\.|[가-힣]\.)(?= )/,'<b class="mk">$1</b>');
-    return `<div class="pt ${lv}">${h}</div>`}).join("");
 }
 function openModal(id){
   const a=byId[id];if(!a)return;
@@ -459,7 +548,7 @@ function openModal(id){
   const ids=coveredIds(a); const canFull=ids.length>0;
   const v=canFull?popView:"sum";
   const lawNo=(ids[0]||a.id).replace(/^a/,"");
-  const fullHtml=canFull?ids.map(k=>{const f=FULL[k];return `${ids.length>1?`<h3 class="fh">${f.no} ${escH(f.t)}</h3>`:""}<div class="full">${renderFullParts(f.p)}</div>`}).join(""):"";
+  const fullHtml=canFull?ids.map(k=>{const f=FULL[k];return `${ids.length>1?`<h3 class="fh">${f.no} ${escH(f.t)}</h3>`:""}${LAWUI.renderParts(k,f.p,"")}`}).join(""):"";
   p.innerHTML=`<button class="close" aria-label="닫기">×</button>
    <div class="kicker">${chap?chap.no+" "+chap.t:"관련 법률"}</div>
    <h2>${a.no} ${a.t}</h2>

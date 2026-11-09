@@ -98,6 +98,15 @@ h2 .no{cursor:pointer}
 h2 .no.star::before{content:"★";color:var(--star);margin-right:4px;font-size:16px}
 h4.dh{font-size:14px;margin:14px 0 4px;color:var(--c7);font-family:var(--font-display)}
 h4.dh .ext{font-size:11px;color:var(--muted);font-weight:500;margin-right:4px;font-family:var(--font-body)}
+/* 시행령 별도 카드: 조문 카드 안의 시행령 블록과 같은 톤 */
+.card.deccard{background:var(--bg);border-style:dashed;border-top-style:solid}
+.card.deccard .full{font-size:13.5px;line-height:1.7}
+.card.deccard h2{font-size:18px}
+.decmark{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;background:var(--c7);color:#fff;border-radius:6px;padding:2px 7px;margin-right:8px;vertical-align:middle;font-family:var(--font-body)}
+.decbanner{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:600;color:var(--fg);background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin:2px 0 6px}
+.decbanner::before{content:"▾";color:var(--accent);font-size:12px}
+.decbanner .cnt{font-weight:500;color:var(--muted);margin-left:auto;font-size:12px}
+.card.deccard h4.dh{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--c7);border-radius:8px;padding:6px 10px;margin:14px 0 6px}
 /* 시행령(접힘) */
 details.dec{margin-top:14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 details.dec>summary{cursor:pointer;padding:9px 12px;font-size:13px;font-weight:600;color:var(--fg);list-style:none;display:flex;gap:8px;align-items:center}
@@ -278,7 +287,7 @@ const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"
 function chapById(id){return CHAPS.find(c=>c.id===id)}
 // ===== 조문 통합 객체: 요지(ARTS) + 원문(FULL). 원문은 전 조문(1~76 + 가지조문 + 삭제조문) 존재 =====
 function getArt(id){
-  if(id.startsWith("d_")){const base=getArt(id.slice(2));if(!base||!DEC[base.id])return null;return {id,base:base.id,no:"시행령",t:`${base.no} 관련 위임법령`,ch:base.ch,chapLabel:base.chapLabel+" · 시행령",full:null,sum:null,isDec:true,dec:DEC[base.id]};}
+  if(id.startsWith("d_")){const base=getArt(id.slice(2));if(!base||!DEC[base.id])return null;return {id,base:base.id,no:"시행령",t:`${base.no} 관련 위임법령`,ch:base.ch,chapLabel:"시행령 · "+base.chapLabel,full:null,sum:null,isDec:true,dec:DEC[base.id]};}
   if(id==="buchik")return {id,no:"부칙",t:BUCHIK.title.replace(/^부칙\s*/,""),ch:11,chapLabel:"부칙 · 2026. 3. 10. 개정 법률",full:{p:BUCHIK.p},sum:null,virtual:true,isBuchik:true};
   const f=FULL[id],s=byId[id]||(ALIAS[id]&&byId[ALIAS[id]])||null;
   if(!f&&!s)return null;
@@ -385,7 +394,7 @@ function renderDec(a){
   return `<details class="dec"><summary>시행령 · 위임법령 원문<span class="cnt">${n}개 조문 · 눌러서 펼치기</span></summary><div class="body"><div class="links" style="margin:10px 0 2px"><button class="lnk" data-deccard="${a.id}" title="시행령을 별도 카드로 열어 법 조문과 나란히 비교">↗ 별도 카드로 열어 나란히 보기</button></div>${body}</div></details>`;
 }
 function renderDecCard(a){
-  return a.dec.map((d,di)=>{const mm=d.t.match(/^(「[^」]+」)\s*(.*)$/);const ext=mm?mm[1]:"",t=mm?mm[2]:d.t;
+  return `<div class="decbanner">시행령 · 위임법령 원문<span class="cnt">${a.dec.length}개 조문 · ${getArt(a.base).no} ${esc(getArt(a.base).t||"")}에 딸린 위임법령</span></div>`+a.dec.map((d,di)=>{const mm=d.t.match(/^(「[^」]+」)\s*(.*)$/);const ext=mm?mm[1]:"",t=mm?mm[2]:d.t;
     return `<h4 class="dh">${ext?`<span class="ext">${esc(ext)}</span>`:""}${esc(t)}</h4>${LAWUI.renderParts(a.base,d.p,`d${di}_`)}`;}).join("")
     +`<div class="links" style="margin-top:12px"><button class="lnk" data-id="${a.base}">${getArt(a.base).no} 법 조문 카드 열기</button></div>`;
 }
@@ -450,7 +459,7 @@ function renderCards(){
   const host=$("#cards");
   if(!open.length){host.innerHTML=`<div class="empty">위에서 조 번호를 치거나 띠에서 번호를 누르면 여기에 조문 카드가 열립니다. 예: <b>15</b> → 제15조 수집·이용 · 상단 <b>원문</b>을 누르면 조·항·호·목 전문이 보입니다.</div>`;return;}
   host.innerHTML=open.map((id,i)=>{const a=getArt(id);const v=viewOf(a);const nm=countMarks(a.base||id);const tm=markOf(id,"t");
-    return `<article class="card" id="c-${id}" style="--cc:${color(a)}">
+    return `<article class="card ${a.isDec?"deccard":""}" id="c-${id}" style="--cc:${a.isDec?"var(--c7)":color(a)}">
       <div class="ctl">
         ${a.full&&a.sum&&!a.isBuchik?`<button class="vw" data-vw="${id}" title="이 카드만 요지/원문 바꾸기">${v==="full"?"요지로":"원문으로"}</button>`:""}
         ${v==="full"||v==="dec"?`<button data-clear="${a.base||id}" class="clr" title="이 조문의 형광펜·별표 모두 지우기" ${nm?"":"hidden"}>표시 ${nm}개 지움</button>`:""}
@@ -458,7 +467,7 @@ function renderCards(){
       </div>
       <button class="close" data-close="${id}" aria-label="닫기">×</button>
       <div class="chap">${esc(a.chapLabel)}</div>
-      <h2><span class="no ${tm.s?"star":""}" data-tstar="${id}">${a.no}</span>${esc(a.t||"")}</h2>
+      <h2>${a.isDec?`<span class="decmark">시행령</span>`:""}<span class="no ${tm.s?"star":""}" data-tstar="${id}">${a.isDec?getArt(a.base).no:a.no}</span>${a.isDec?"관련 위임법령":esc(a.t||"")}</h2>
       <div class="meta">${(a.sum&&!a.sumIsAlias?(a.sum.s||[]):[]).map(s=>`<span class="tag">${s}</span>`).join("")}${(AMEND[a.id]||(a.sum&&!a.sumIsAlias&&a.sum.n))?'<span class="amend">2026 개정</span>':""}${a.deleted?'<span class="tag">삭제된 조문</span>':""}<span>${a.isDec?`위임법령 ${a.dec.length}개 조문 · 형광펜은 법 조문 카드와 공유`:(a.sum&&!a.sumIsAlias?a.sum.hint:(a.full?`조·항·호·목 ${a.full.p.length}개 단락`:""))}</span></div>
       ${v==="dec"?renderDecCard(a):v==="full"?renderFull(a):renderSum(a)}
       ${v==="dec"?"":renderDec(a)}

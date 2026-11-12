@@ -36,6 +36,7 @@ h1{font-family:var(--font-display);font-size:clamp(24px,4vw,34px);margin:0 0 4px
 @media (max-width:760px){.side{position:static}}
 .side h3{font-size:12px;letter-spacing:.06em;color:var(--muted);margin:12px 0 6px;text-transform:uppercase}
 .side h3:first-child{margin-top:0}
+.nextbtn{margin-top:10px;font-weight:600}
 .chk{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:14px;cursor:pointer}
 .chk input{accent-color:var(--accent)}
 .chk .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
@@ -141,6 +142,8 @@ summary{cursor:pointer;font-weight:600}
     <div id="types"></div>
     <h3>문항 수</h3>
     <select id="count"><option value="10">10문항</option><option value="20" selected>20문항</option><option value="30">30문항</option><option value="999">선택 범위 전체</option></select>
+    <label class="chk" style="margin-top:8px"><input type="checkbox" id="autoscroll" checked>답 확인 후 다음 문제로 자동 이동</label>
+    <div style="font-size:12px;color:var(--muted);margin:-2px 0 6px 24px">끄면 해설을 다 읽고 ‘다음 문제 ↓’ 버튼으로 넘어갑니다</div>
     <div class="stack">
       <button class="btn primary" id="start">새로 시작 (무작위)</button>
       <button class="btn" id="retry">복습하기 <span id="wrongCnt"></span></button>
@@ -567,9 +570,12 @@ document.addEventListener("click",e=>{
     const v=$("#v"+i);v.textContent=right?"정답":"오답";v.className="verdict "+(right?"ok":"bad");
     $("#e"+i).classList.add("on");chk.disabled=true;
     grade(q.id,right);refreshInfo();updateStatus();
-    const next=document.getElementById("q"+(i+1));if(next)setTimeout(()=>next.scrollIntoView({behavior:"smooth",block:"start"}),250);
+    const next=document.getElementById("q"+(i+1));
+    if(next){if(ls.get("cppg-quiz-autoscroll",true))setTimeout(()=>next.scrollIntoView({behavior:"smooth",block:"start"}),250);
+      else{const nb=document.createElement("button");nb.className="btn nextbtn";nb.textContent="다음 문제 ↓";nb.onclick=()=>next.scrollIntoView({behavior:"smooth",block:"start"});$("#e"+i).appendChild(nb);}}
   }
 });
+{const a=$("#autoscroll");a.checked=ls.get("cppg-quiz-autoscroll",true);a.onchange=()=>ls.set("cppg-quiz-autoscroll",a.checked);}
 $("#start").onclick=()=>start(BANK,false);
 $("#retry").onclick=()=>start(BANK,true);
 $("#finish").onclick=()=>{
